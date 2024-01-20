@@ -1,27 +1,21 @@
 ﻿namespace Winmd;
 
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
+using JsonVisitors;
 
-public class JsonGenerator : IVisitor<Type, JsonObject>
+class JsonGenerator : IVisitor<Type, JsonObject>
 {
-    private static readonly ISet<TypeAttributes> TypeAttributeSet = Enum.GetValues(typeof(TypeAttributes))
-        .Cast<TypeAttributes>()
-        .Where(a => (a & (a - 1)) == 0)
-        .ToImmutableHashSet();
-
-    private static readonly ISet<string> EnumInterfaces = typeof(Enum).GetInterfaces()
-        .Select(x => x.FullName!)
-        .ToImmutableHashSet();
-
     // ReSharper disable once InconsistentNaming
     private static readonly TypeAttributesVisitor typeAttributesVisitor = new();
+
     // ReSharper disable once InconsistentNaming
     private static readonly CustomAttributeVisitor customAttributeVisitor = new();
+
     // ReSharper disable once InconsistentNaming
     private static readonly StructLayoutAttributeVisitor structLayoutAttributeVisitor = new();
+
     // ReSharper disable once InconsistentNaming
     private static readonly EnumVisitor enumVisitor = new();
 
@@ -63,13 +57,13 @@ public class JsonGenerator : IVisitor<Type, JsonObject>
         return json;
     }
 
-    private static JsonArray CreateArray<T>(IEnumerable<T> source) where T : JsonNode?
+    internal static JsonArray CreateArray<T>(IEnumerable<T> source) where T : JsonNode?
     {
         return new JsonArray(
             (
                 from s in source
                 where s is not null
-                select (JsonNode) s
+                select (JsonNode)s
             ).ToArray()
         );
     }
@@ -89,7 +83,8 @@ public class JsonGenerator : IVisitor<Type, JsonObject>
     private static JsonArray Visit(
         StructLayoutAttribute? structLayoutAttribute,
         IEnumerable<CustomAttributeData> attributes
-    ) {
+    )
+    {
         var customAttributes = from a in attributes
             where a.GetType().FullName != "System.Reflection.TypeLoading.Ecma.EcmaCustomAttributeData"
             select a.Accept(customAttributeVisitor);
@@ -102,152 +97,5 @@ public class JsonGenerator : IVisitor<Type, JsonObject>
         }
 
         return CreateArray(customAttributes);
-    }
-
-    private class InterfaceTypeVisitor : IVisitor<Type, JsonValue?>
-    {
-        public InterfaceTypeVisitor(Type type)
-        {
-            Type = type;
-        }
-
-        private Type Type { get; }
-
-        public JsonValue? Visit(Type interfaceType)
-        {
-            var name = interfaceType.FullName!;
-            return Type.IsEnum && EnumInterfaces.Contains(name) ? null : JsonValue.Create(name);
-        }
-    }
-
-    private class TypeAttributesVisitor : IVisitor<TypeAttributes, JsonArray>
-    {
-        public JsonArray Visit(TypeAttributes typeAttributes) => CreateArray(
-            from a in TypeAttributeSet
-            where (typeAttributes & a) != 0
-            select JsonValue.Create(a.ToString())
-        );
-    }
-
-    private class CustomAttributeVisitor : IVisitor<CustomAttributeData, JsonObject>
-    {
-        private static readonly CustomAttributeArgumentVisitor ArgumentVisitor = new();
-
-        public JsonObject Visit(CustomAttributeData attribute)
-        {
-            var args =
-                from a in attribute.ConstructorArguments
-                select a.Accept<JsonObject>(ArgumentVisitor);
-
-            var namedArgs =
-                from a in attribute.NamedArguments
-                select a.Accept<JsonObject>(ArgumentVisitor);
-
-            return new JsonObject
-            {
-                ["Name"] = JsonValue.Create(attribute.AttributeType.FullName),
-                ["Arguments"] = CreateArray(args.Concat(namedArgs))
-            };
-        }
-    }
-
-    private class StructLayoutAttributeVisitor : IVisitor<StructLayoutAttribute, JsonObject?>
-    {
-        public JsonObject? Visit(StructLayoutAttribute attribute)
-        {
-            var args = new List<JsonNode>();
-
-            if (attribute.Value != 0)
-            {
-                args.Add(CustomAttributeArgumentVisitor.Create(
-                    null,
-                    false,
-                    typeof(LayoutKind),
-                    attribute.Value
-                ));
-            }
-
-            if (attribute.Pack != IntPtr.Size)
-            {
-                args.Add(CustomAttributeArgumentVisitor.Create(
-                    nameof(StructLayoutAttribute.Pack),
-                    true,
-                    attribute.Pack.GetType(),
-                    attribute.Pack
-                ));
-            }
-
-            if (attribute.Size != 0)
-            {
-                args.Add(CustomAttributeArgumentVisitor.Create(
-                    nameof(StructLayoutAttribute.Size),
-                    true,
-                    attribute.Size.GetType(),
-                    attribute.Size
-                ));
-            }
-
-            if (attribute.CharSet != CharSet.Ansi)
-            {
-                args.Add(CustomAttributeArgumentVisitor.Create(
-                    nameof(StructLayoutAttribute.CharSet),
-                    true,
-                    attribute.CharSet.GetType(),
-                    attribute.CharSet
-                ));
-            }
-
-            return args.Count == 0
-                ? null
-                : new JsonObject
-                {
-                    ["Name"] = typeof(StructLayoutAttribute).FullName,
-                    ["Arguments"] = CreateArray(args)
-                };
-        }
-    }
-
-    private class CustomAttributeArgumentVisitor :
-        IVisitor<CustomAttributeTypedArgument, JsonObject>,
-        IVisitor<CustomAttributeNamedArgument, JsonObject>
-    {
-        public JsonObject Visit(CustomAttributeTypedArgument arg) => Create(null, false, arg);
-
-        public JsonObject Visit(CustomAttributeNamedArgument arg) =>
-            Create(arg.MemberName, arg.IsField, arg.TypedValue);
-
-        private static JsonObject Create(string? name, bool isField, CustomAttributeTypedArgument arg) =>
-            Create(name, isField, arg.ArgumentType, arg.Value);
-
-        public static JsonObject Create(string? name, bool isField, Type argumentType, object? value)
-        {
-            if (argumentType.IsEnum && value is not null)
-            {
-                value = argumentType.GetEnumName(value) ?? value;
-            }
-
-            return new JsonObject
-            {
-                ["Name"] = name,
-                ["IsField"] = isField,
-                ["Type"] = argumentType.FullName,
-                ["Value"] = JsonValue.Create(value),
-            };
-        }
-    }
-
-    private class EnumVisitor : IVisitor<Type, JsonObject>
-    {
-        public JsonObject Visit(Type type)
-        {
-            var json = new JsonObject();
-
-            if (type.GetEnumUnderlyingType() != typeof(int))
-            {
-                json["Type"] = type.GetEnumUnderlyingType().FullName;
-            }
-
-            return json;
-        }
     }
 }
