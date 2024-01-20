@@ -1,8 +1,7 @@
-﻿namespace Winmd;
+﻿namespace Winmd.JsonVisitors;
 
 using System.Reflection;
 using System.Text.Json.Nodes;
-using JsonVisitors;
 
 class CustomAttributeVisitor : IVisitor<CustomAttributeData, JsonObject>
 {

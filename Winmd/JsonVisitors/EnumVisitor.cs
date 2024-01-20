@@ -12,8 +12,8 @@ class EnumVisitor : IVisitor<Type, JsonObject>
         {
             json["Type"] = type.GetEnumUnderlyingType().FullName;
         }
-        
-        // TODO: 
+
+        // TODO:
 
         return json;
     }
