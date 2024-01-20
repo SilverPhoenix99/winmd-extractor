@@ -1,11 +1,11 @@
 ﻿namespace Winmd;
 
-public interface IVisitor<in I>
+public interface IVisitor<in TIn>
 {
-    void Visit(I input);
+    void Visit(TIn input);
 }
 
-public interface IVisitor<in I, out O>
+public interface IVisitor<in TIn, out TResult>
 {
-    O Visit(I input);
+    TResult Visit(TIn input);
 }
