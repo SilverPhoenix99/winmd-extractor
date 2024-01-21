@@ -31,6 +31,6 @@ class CustomAttributeArgumentVisitor :
             return value;
         }
 
-        return argumentType.Fields.FirstOrDefault(f => f.Constant == value)?.Name ?? value;
+        return argumentType.Fields.FirstOrDefault(f => Equals(f.Constant, value))?.Name ?? value;
     }
 }
