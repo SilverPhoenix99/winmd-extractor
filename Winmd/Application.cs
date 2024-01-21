@@ -15,8 +15,7 @@ var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 
 var allTypes = assembly.Modules
     .SelectMany(m => m.Types)
-    .Where(t => !t.IsNested)
-    .Where(m => m.IsPublic)
+    .Where(t => t.IsPublic && !t.IsNested) // Nested types are dealt recursively, so they need to be excluded here
     .GroupBy(t => t.Namespace!);
 
 var options = new JsonSerializerOptions

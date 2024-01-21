@@ -23,6 +23,8 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
             ["Interfaces"] = VisitInterfaces(type),
             ["Attributes"] = type.Attributes.Accept(typeAttributesVisitor),
             ["CustomAttributes"] = Visit(type.CustomAttributes),
+            ["ClassSize"] = type.ClassSize,
+            ["PackingSize"] = type.PackingSize,
         };
 
         /*
