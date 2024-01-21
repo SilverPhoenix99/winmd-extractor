@@ -9,6 +9,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
     private static readonly TypeAttributesVisitor TypeAttributesVisitor = new();
     private static readonly CustomAttributeVisitor CustomAttributeVisitor = new();
     private static readonly EnumVisitor EnumVisitor = new();
+    private static readonly DelegateVisitor DelegateVisitor = new();
 
     public JsonObject Visit(TypeDefinition type)
     {
@@ -44,10 +45,11 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
         }
         else if (type.IsDelegate())
         {
-            // TODO json["Delegate"] = type.Accept(delegateVisitor);
+            json["Delegate"] = type.Accept(DelegateVisitor);
         }
         else if (type.IsValueType)
         {
+            // TODO: json["Typedef"] = when NativeTypedefAttribute
             // TODO json["Struct"] = type.Accept(structVisitor);
         }
         else
