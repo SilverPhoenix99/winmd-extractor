@@ -3,8 +3,10 @@
 using System.Text.Json.Nodes;
 using Mono.Cecil;
 
-public class DelegateVisitor : IVisitor<TypeDefinition, JsonObject>
+class DelegateVisitor : IVisitor<TypeDefinition, JsonObject>
 {
+    public static readonly DelegateVisitor Instance = new();
+
     public JsonObject Visit(TypeDefinition type)
     {
         var method = type.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;

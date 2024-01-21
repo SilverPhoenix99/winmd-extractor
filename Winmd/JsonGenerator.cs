@@ -6,10 +6,7 @@ using Mono.Cecil;
 
 class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 {
-    private static readonly TypeAttributesVisitor TypeAttributesVisitor = new();
-    private static readonly CustomAttributeVisitor CustomAttributeVisitor = new();
-    private static readonly EnumVisitor EnumVisitor = new();
-    private static readonly DelegateVisitor DelegateVisitor = new();
+    public static readonly JsonGenerator Instance = new();
 
     public JsonObject Visit(TypeDefinition type)
     {
@@ -17,7 +14,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
         {
             ["BaseType"] = type.IsInterface ? "interface" : type.BaseType?.FullName,
             ["Interfaces"] = VisitInterfaces(type),
-            ["Attributes"] = type.Attributes.Accept(TypeAttributesVisitor),
+            ["Attributes"] = type.Attributes.Accept(TypeAttributesVisitor.Instance),
             ["CustomAttributes"] = Visit(type.CustomAttributes),
         };
 
@@ -36,16 +33,16 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
             * System.Enum
             * System.MulticastDelegate - callbacks
             * System.Object - class Apis, the list of available functions
-            * System.ValueType - structs, unions, or typedefs (when it has a single field)
+            * System.ValueType - structs, unions, or typedefs (when it has NativeTypedefAttribute)
         */
 
         if (type.IsEnum)
         {
-            json["Enum"] = type.Accept(EnumVisitor);
+            json["Enum"] = type.Accept(EnumVisitor.Instance);
         }
         else if (type.IsDelegate())
         {
-            json["Delegate"] = type.Accept(DelegateVisitor);
+            json["Delegate"] = type.Accept(DelegateVisitor.Instance);
         }
         else if (type.IsValueType)
         {
@@ -87,7 +84,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
     {
         return CreateArray(
             from a in attributes
-            select a.Accept(CustomAttributeVisitor)
+            select a.Accept(CustomAttributeVisitor.Instance)
         );
     }
 }

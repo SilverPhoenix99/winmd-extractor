@@ -6,7 +6,7 @@ using Mono.Cecil.Rocks;
 
 class EnumVisitor : IVisitor<TypeDefinition, JsonObject>
 {
-    private static readonly EnumMemberVisitor EnumMemberVisitor = new();
+    public static readonly EnumVisitor Instance = new();
 
     public JsonObject Visit(TypeDefinition type)
     {
@@ -24,7 +24,7 @@ class EnumVisitor : IVisitor<TypeDefinition, JsonObject>
         json["Elements"] = JsonGenerator.CreateArray(
             from field in type.Fields
             where !field.IsSpecialName
-            select field.Accept(EnumMemberVisitor)
+            select field.Accept(EnumMemberVisitor.Instance)
         );
 
         return json;

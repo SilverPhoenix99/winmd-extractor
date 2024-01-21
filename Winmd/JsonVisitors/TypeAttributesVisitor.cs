@@ -6,6 +6,8 @@ using Mono.Cecil;
 
 class TypeAttributesVisitor : IVisitor<TypeAttributes, JsonArray>
 {
+    public static readonly TypeAttributesVisitor Instance = new();
+
     private static readonly ImmutableHashSet<TypeAttributes> TypeAttributeSet = Enum.GetValues(typeof(TypeAttributes))
         .Cast<TypeAttributes>()
         .Where(a => (a & (a - 1)) == 0)

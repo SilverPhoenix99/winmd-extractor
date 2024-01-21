@@ -25,8 +25,6 @@ var options = new JsonSerializerOptions
 };
 options.MakeReadOnly();
 
-var jsonGenerator = new JsonGenerator();
-
 foreach (var groupedTypes in allTypes)
 {
     var types =
@@ -34,7 +32,7 @@ foreach (var groupedTypes in allTypes)
         orderby t.Name
         select new KeyValuePair<string, JsonNode>(
             t.Name,
-            t.Accept(jsonGenerator)
+            t.Accept(JsonGenerator.Instance)
         );
 
     var rootJson = new JsonObject(types.DistinctBy(t => t.Key));

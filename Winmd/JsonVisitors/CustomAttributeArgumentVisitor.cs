@@ -7,6 +7,8 @@ class CustomAttributeArgumentVisitor :
     IVisitor<CustomAttributeArgument, JsonObject>,
     IVisitor<CustomAttributeNamedArgument, JsonObject>
 {
+    public static readonly CustomAttributeArgumentVisitor Instance = new();
+
     public JsonObject Visit(CustomAttributeArgument arg) => AsJson(null, arg);
 
     public JsonObject Visit(CustomAttributeNamedArgument arg) => AsJson(arg.Name, arg.Argument);

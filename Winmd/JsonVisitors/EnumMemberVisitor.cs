@@ -5,6 +5,8 @@ using Mono.Cecil;
 
 class EnumMemberVisitor : IVisitor<FieldDefinition, JsonObject>
 {
+    public static readonly EnumMemberVisitor Instance = new();
+
     public JsonObject Visit(FieldDefinition field)
     {
         var element = new JsonObject { ["Name"] = field.Name };

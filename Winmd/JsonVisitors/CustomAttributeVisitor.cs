@@ -5,16 +5,16 @@ using Mono.Cecil;
 
 class CustomAttributeVisitor : IVisitor<CustomAttribute, JsonObject>
 {
-    private static readonly CustomAttributeArgumentVisitor ArgumentVisitor = new();
+    public static readonly CustomAttributeVisitor Instance = new();
 
     public JsonObject Visit(CustomAttribute attribute)
     {
         var args = attribute.ConstructorArguments
-            .Select(arg => arg.Accept<JsonObject>(ArgumentVisitor))
+            .Select(arg => arg.Accept<JsonObject>(CustomAttributeArgumentVisitor.Instance))
             .Concat(
                 attribute.Fields
                     .Concat(attribute.Properties)
-                    .Select(arg => arg.Accept<JsonObject>(ArgumentVisitor))
+                    .Select(arg => arg.Accept<JsonObject>(CustomAttributeArgumentVisitor.Instance))
             );
 
         return new JsonObject
