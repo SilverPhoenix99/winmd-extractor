@@ -2,24 +2,28 @@
 
 using System.Collections.Immutable;
 using System.Text.Json.Nodes;
+using ClassExtensions;
 using Mono.Cecil;
 
-class InterfaceTypeVisitor : IVisitor<InterfaceImplementation, JsonValue?>
+class InterfaceTypeVisitor(TypeDefinition type) : IVisitor<InterfaceImplementation, JsonObject?>
 {
     private static readonly ImmutableHashSet<string> EnumInterfaces = typeof(Enum).GetInterfaces()
         .Select(x => x.FullName!)
         .ToImmutableHashSet();
 
-    public InterfaceTypeVisitor(TypeDefinition type)
+    public JsonObject? Visit(InterfaceImplementation interfaceType)
     {
-        Type = type;
-    }
+        if (type.IsEnum && EnumInterfaces.Contains(interfaceType.InterfaceType.FullName))
+        {
+            return null;
+        }
 
-    private TypeDefinition Type { get; }
+        var (name, ns) = interfaceType.InterfaceType.GetQualifiedName();
 
-    public JsonValue? Visit(InterfaceImplementation interfaceType)
-    {
-        var name = interfaceType.InterfaceType.Resolve().FullName!;
-        return Type.IsEnum && EnumInterfaces.Contains(name) ? null : JsonValue.Create(name);
+        return new JsonObject
+        {
+            ["Name"] = name,
+            ["Namespace"] = ns
+        };
     }
 }
