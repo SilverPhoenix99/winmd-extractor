@@ -19,6 +19,16 @@ class CustomAttributeArgumentVisitor :
         {
             ["Name"] = name,
             ["Type"] = argumentType.FullName,
-            ["Value"] = JsonValue.Create(value),
+            ["Value"] = JsonValue.Create(ParseValue(argumentType, value)),
         };
+
+    private static object? ParseValue(TypeDefinition argumentType, object? value)
+    {
+        if (!argumentType.IsEnum || value is null)
+        {
+            return value;
+        }
+
+        return argumentType.Fields.FirstOrDefault(f => f.Constant == value)?.Name ?? value;
+    }
 }

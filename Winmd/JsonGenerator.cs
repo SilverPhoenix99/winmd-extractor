@@ -83,9 +83,9 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 
     private static JsonArray Visit(IEnumerable<CustomAttribute> attributes)
     {
-        var customAttributes = from a in attributes
-            select a.Accept(CustomAttributeVisitor);
-
-        return CreateArray(customAttributes);
+        return CreateArray(
+            from a in attributes
+            select a.Accept(CustomAttributeVisitor)
+        );
     }
 }
