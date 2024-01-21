@@ -20,13 +20,13 @@ var allTypes = assembly.Modules
     .Where(t => t.IsPublic && !t.IsNested) // Nested types are dealt recursively, so they need to be excluded here
     .GroupBy(t => t.Namespace!);
 
-var options = new JsonSerializerOptions
+var jsonOptions = new JsonSerializerOptions
 {
     WriteIndented = true,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     TypeInfoResolver = new DefaultJsonTypeInfoResolver()
 };
-options.MakeReadOnly();
+jsonOptions.MakeReadOnly();
 
 foreach (var groupedTypes in allTypes)
 {
@@ -42,5 +42,6 @@ foreach (var groupedTypes in allTypes)
 
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
 
-    File.WriteAllText(filePath, rootJson.ToJsonString(options));
+    var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+    JsonSerializer.Serialize(output, rootJson, jsonOptions);
 }
