@@ -17,9 +17,16 @@ class CustomAttributeVisitor : IVisitor<CustomAttribute, JsonObject>
                     .Select(arg => arg.Accept<JsonObject>(CustomAttributeArgumentVisitor.Instance))
             );
 
+        var name = attribute.AttributeType.Name;
+        if (name.EndsWith("Attribute"))
+        {
+            name = name[..^9];
+        }
+
         return new JsonObject
         {
-            ["Name"] = JsonValue.Create(attribute.AttributeType.FullName),
+            ["Name"] = name,
+            ["Namespace"] = attribute.AttributeType.Namespace,
             ["Arguments"] = JsonGenerator.CreateArray(args)
         };
     }
