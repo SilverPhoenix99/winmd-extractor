@@ -24,4 +24,7 @@ static class ReflectionExtensions
 
     public static TO Accept<TO>(this FieldDefinition element, IVisitor<FieldDefinition, TO> visitor) =>
         visitor.Visit(element);
+
+    public static TO Accept<TO>(this ParameterDefinition element, IVisitor<ParameterDefinition, TO> visitor) =>
+        visitor.Visit(element);
 }
