@@ -6,14 +6,9 @@ using Mono.Cecil;
 
 class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 {
-    // ReSharper disable once InconsistentNaming
-    private static readonly TypeAttributesVisitor typeAttributesVisitor = new();
-
-    // ReSharper disable once InconsistentNaming
-    private static readonly CustomAttributeVisitor customAttributeVisitor = new();
-
-    // ReSharper disable once InconsistentNaming
-    private static readonly EnumVisitor enumVisitor = new();
+    private static readonly TypeAttributesVisitor TypeAttributesVisitor = new();
+    private static readonly CustomAttributeVisitor CustomAttributeVisitor = new();
+    private static readonly EnumVisitor EnumVisitor = new();
 
     public JsonObject Visit(TypeDefinition type)
     {
@@ -21,7 +16,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
         {
             ["BaseType"] = type.IsInterface ? "interface" : type.BaseType?.FullName,
             ["Interfaces"] = VisitInterfaces(type),
-            ["Attributes"] = type.Attributes.Accept(typeAttributesVisitor),
+            ["Attributes"] = type.Attributes.Accept(TypeAttributesVisitor),
             ["CustomAttributes"] = Visit(type.CustomAttributes),
         };
 
@@ -45,7 +40,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 
         if (type.IsEnum)
         {
-            json["Enum"] = type.Accept(enumVisitor);
+            json["Enum"] = type.Accept(EnumVisitor);
         }
         else if (type.IsDelegate())
         {
@@ -89,7 +84,7 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
     private static JsonArray Visit(IEnumerable<CustomAttribute> attributes)
     {
         var customAttributes = from a in attributes
-            select a.Accept(customAttributeVisitor);
+            select a.Accept(CustomAttributeVisitor);
 
         return CreateArray(customAttributes);
     }
