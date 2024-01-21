@@ -23,9 +23,17 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
             ["Interfaces"] = VisitInterfaces(type),
             ["Attributes"] = type.Attributes.Accept(typeAttributesVisitor),
             ["CustomAttributes"] = Visit(type.CustomAttributes),
-            ["ClassSize"] = type.ClassSize,
-            ["PackingSize"] = type.PackingSize,
         };
+
+        if (type.ClassSize > 0)
+        {
+            json["ClassSize"] = type.ClassSize;
+        }
+
+        if (type.PackingSize > 0)
+        {
+            json["PackingSize"] = type.PackingSize;
+        }
 
         /*
         Types that can show up:
