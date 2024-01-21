@@ -1,0 +1,32 @@
+﻿namespace Winmd.Model.Visitors;
+
+using ClassExtensions;
+using Mono.Cecil;
+
+class ModelGenerator : IVisitor<TypeDefinition, BaseObjectModel>
+{
+    public static readonly ModelGenerator Instance = new();
+
+    private ModelGenerator() {}
+
+    public BaseObjectModel Visit(TypeDefinition value)
+    {
+        var modelType = GetModelType(value);
+        return modelType switch
+        {
+            ModelType.Enum => value.Accept(EnumVisitor.Instance),
+            ModelType.Callback => value.Accept(CallbackVisitor.Instance),
+            _ => value.Accept(new ObjectModelVisitor(modelType))
+        };
+    }
+
+    private static ModelType GetModelType(TypeDefinition type)
+    {
+        return type.IsInterface ? ModelType.Interface
+            : type.IsEnum ? ModelType.Enum
+            : type.IsDelegate() ? ModelType.Callback
+            : !type.IsValueType ? ModelType.Object
+            : type.IsTypedef() ? ModelType.Typedef
+            : ModelType.Struct;
+    }
+}

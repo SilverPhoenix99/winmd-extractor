@@ -9,4 +9,13 @@ static class TypeDefinitionExtensions
 
     public static bool IsDelegate(this TypeDefinition element) =>
         element.BaseType?.FullName == "System.MulticastDelegate";
+
+    public static bool IsTypedef(this TypeDefinition type)
+    {
+        return type.CustomAttributes
+            .Any(a =>
+                a.AttributeType.Name == "NativeTypedefAttribute"
+                && a.AttributeType.Namespace.StartsWith("Windows.Win32")
+            );
+    }
 }

@@ -16,7 +16,7 @@ static class ReflectionExtensions
     ) =>
         visitor.Visit(element);
 
-    public static TO Accept<TO>(this TypeAttributes element, IVisitor<TypeAttributes, TO> visitor) =>
+    public static TO Accept<TO>(this Enum element, IVisitor<Enum, TO> visitor) =>
         visitor.Visit(element);
 
     public static TO Accept<TO>(this InterfaceImplementation element, IVisitor<InterfaceImplementation, TO> visitor) =>
