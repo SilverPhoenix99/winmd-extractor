@@ -1,6 +1,7 @@
 ﻿namespace Winmd.JsonVisitors;
 
 using System.Text.Json.Nodes;
+using ClassExtensions;
 using Mono.Cecil;
 
 class CustomAttributeVisitor : IVisitor<CustomAttribute, JsonObject>
@@ -9,6 +10,12 @@ class CustomAttributeVisitor : IVisitor<CustomAttribute, JsonObject>
 
     public JsonObject Visit(CustomAttribute attribute)
     {
+        var (name, ns) = attribute.AttributeType.GetQualifiedName();
+        if (name.EndsWith("Attribute"))
+        {
+            name = name[..^9];
+        }
+
         var args = attribute.ConstructorArguments
             .Select(arg => arg.Accept<JsonObject>(CustomAttributeArgumentVisitor.Instance))
             .Concat(
@@ -17,16 +24,10 @@ class CustomAttributeVisitor : IVisitor<CustomAttribute, JsonObject>
                     .Select(arg => arg.Accept<JsonObject>(CustomAttributeArgumentVisitor.Instance))
             );
 
-        var name = attribute.AttributeType.Name;
-        if (name.EndsWith("Attribute"))
-        {
-            name = name[..^9];
-        }
-
         return new JsonObject
         {
             ["Name"] = name,
-            ["Namespace"] = attribute.AttributeType.Namespace,
+            ["Namespace"] = ns,
             ["Arguments"] = JsonGenerator.CreateArray(args)
         };
     }

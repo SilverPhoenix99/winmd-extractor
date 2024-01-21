@@ -1,6 +1,7 @@
 ﻿namespace Winmd.JsonVisitors;
 
 using System.Text.Json.Nodes;
+using ClassExtensions;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 

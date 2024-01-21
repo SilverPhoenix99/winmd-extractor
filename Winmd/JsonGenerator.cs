@@ -1,6 +1,7 @@
 ﻿namespace Winmd;
 
 using System.Text.Json.Nodes;
+using ClassExtensions;
 using JsonVisitors;
 using Mono.Cecil;
 
@@ -10,23 +11,23 @@ class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 
     public JsonObject Visit(TypeDefinition type)
     {
+        var (name, ns) = type.IsInterface
+            ? ("interface", null)
+            : type.BaseType.GetQualifiedName();
+
         var json = new JsonObject
         {
-            ["BaseType"] = type.IsInterface ? "interface" : type.BaseType?.FullName,
+            ["BaseType"] = new JsonObject
+            {
+                ["Name"] = name,
+                ["Namespace"] = ns,
+            },
             ["Interfaces"] = VisitInterfaces(type),
             ["Attributes"] = type.Attributes.Accept(TypeAttributesVisitor.Instance),
             ["CustomAttributes"] = Visit(type.CustomAttributes),
+            ["ClassSize"] = type.ClassSize > 0 ? type.ClassSize : null,
+            ["PackingSize"] = type.PackingSize > 0 ? type.PackingSize : null,
         };
-
-        if (type.ClassSize > 0)
-        {
-            json["ClassSize"] = type.ClassSize;
-        }
-
-        if (type.PackingSize > 0)
-        {
-            json["PackingSize"] = type.PackingSize;
-        }
 
         /*
         Types that can show up:

@@ -1,8 +1,10 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Mono.Cecil;
 using Winmd;
+using Winmd.ClassExtensions;
 
 var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -21,6 +23,7 @@ var allTypes = assembly.Modules
 var options = new JsonSerializerOptions
 {
     WriteIndented = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     TypeInfoResolver = new DefaultJsonTypeInfoResolver()
 };
 options.MakeReadOnly();
