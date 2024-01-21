@@ -1,8 +1,8 @@
 ﻿namespace Winmd.JsonVisitors;
 
 using System.Collections.Immutable;
-using System.Reflection;
 using System.Text.Json.Nodes;
+using Mono.Cecil;
 
 class TypeAttributesVisitor : IVisitor<TypeAttributes, JsonArray>
 {

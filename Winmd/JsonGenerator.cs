@@ -1,11 +1,10 @@
 ﻿namespace Winmd;
 
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.Json.Nodes;
 using JsonVisitors;
+using Mono.Cecil;
 
-class JsonGenerator : IVisitor<Type, JsonObject>
+class JsonGenerator : IVisitor<TypeDefinition, JsonObject>
 {
     // ReSharper disable once InconsistentNaming
     private static readonly TypeAttributesVisitor typeAttributesVisitor = new();
@@ -14,19 +13,16 @@ class JsonGenerator : IVisitor<Type, JsonObject>
     private static readonly CustomAttributeVisitor customAttributeVisitor = new();
 
     // ReSharper disable once InconsistentNaming
-    private static readonly StructLayoutAttributeVisitor structLayoutAttributeVisitor = new();
-
-    // ReSharper disable once InconsistentNaming
     private static readonly EnumVisitor enumVisitor = new();
 
-    public JsonObject Visit(Type type)
+    public JsonObject Visit(TypeDefinition type)
     {
         var json = new JsonObject
         {
             ["BaseType"] = type.IsInterface ? "interface" : type.BaseType?.FullName,
             ["Interfaces"] = VisitInterfaces(type),
             ["Attributes"] = type.Attributes.Accept(typeAttributesVisitor),
-            ["CustomAttributes"] = Visit(type.StructLayoutAttribute, type.GetCustomAttributesData()),
+            ["CustomAttributes"] = Visit(type.CustomAttributes),
         };
 
         /*
@@ -41,7 +37,7 @@ class JsonGenerator : IVisitor<Type, JsonObject>
         {
             json["Enum"] = type.Accept(enumVisitor);
         }
-        else if (type.IsAssignableTo(typeof(Delegate)))
+        else if (type.IsDelegate())
         {
             // TODO json["Delegate"] = type.Accept(delegateVisitor);
         }
@@ -63,38 +59,27 @@ class JsonGenerator : IVisitor<Type, JsonObject>
             (
                 from s in source
                 where s is not null
-                select (JsonNode)s
+                select (JsonNode) s
             ).ToArray()
         );
     }
 
-    private static JsonArray VisitInterfaces(Type type)
+    private static JsonArray VisitInterfaces(TypeDefinition type)
     {
         var interfaceTypeVisitor = new InterfaceTypeVisitor(type);
 
         return CreateArray(
-            from i in type.GetInterfaces()
+            from i in type.Interfaces
             let v = i.Accept(interfaceTypeVisitor)
             where v is not null
             select v!
         );
     }
 
-    private static JsonArray Visit(
-        StructLayoutAttribute? structLayoutAttribute,
-        IEnumerable<CustomAttributeData> attributes
-    )
+    private static JsonArray Visit(IEnumerable<CustomAttribute> attributes)
     {
         var customAttributes = from a in attributes
-            where a.GetType().FullName != "System.Reflection.TypeLoading.Ecma.EcmaCustomAttributeData"
             select a.Accept(customAttributeVisitor);
-
-        var structLayout = structLayoutAttribute?.Accept(structLayoutAttributeVisitor);
-
-        if (structLayout is not null)
-        {
-            customAttributes = customAttributes.Prepend(structLayout);
-        }
 
         return CreateArray(customAttributes);
     }

@@ -1,19 +1,22 @@
 ﻿namespace Winmd.JsonVisitors;
 
 using System.Text.Json.Nodes;
+using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
-class EnumVisitor : IVisitor<Type, JsonObject>
+class EnumVisitor : IVisitor<TypeDefinition, JsonObject>
 {
-    public JsonObject Visit(Type type)
+    public JsonObject Visit(TypeDefinition type)
     {
         var json = new JsonObject();
 
-        if (type.GetEnumUnderlyingType() != typeof(int))
+        var baseType = type.GetEnumUnderlyingType().FullName;
+        if (baseType != typeof(int).FullName)
         {
-            json["Type"] = type.GetEnumUnderlyingType().FullName;
+            json["Type"] = baseType;
         }
 
-        // TODO:
+        // TODO: enum members
 
         return json;
     }

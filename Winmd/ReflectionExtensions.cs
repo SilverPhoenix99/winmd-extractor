@@ -1,30 +1,29 @@
 ﻿namespace Winmd;
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+using Mono.Cecil;
 
-public static class ReflectionExtensions
+static class ReflectionExtensions
 {
-    public static O Accept<O>(this Type type, IVisitor<Type, O> visitor) => visitor.Visit(type);
+    public static bool IsDelegate(this TypeDefinition element) => element.BaseType?.FullName == "System.MulticastDelegate";
 
-    public static O Accept<O>(this TypeAttributes attributes, IVisitor<TypeAttributes, O> visitor) =>
-        visitor.Visit(attributes);
+    public static TO Accept<TO>(this TypeDefinition element, IVisitor<TypeDefinition, TO> visitor) =>
+        visitor.Visit(element);
 
-    public static O Accept<O>(this CustomAttributeData attribute, IVisitor<CustomAttributeData, O> visitor) =>
-        visitor.Visit(attribute);
+    public static TO Accept<TO>(this CustomAttribute element, IVisitor<CustomAttribute, TO> visitor) =>
+        visitor.Visit(element);
 
-    public static O Accept<O>(this StructLayoutAttribute attribute, IVisitor<StructLayoutAttribute, O> visitor) =>
-        visitor.Visit(attribute);
-
-    public static O Accept<O>(
-        this CustomAttributeTypedArgument arg,
-        IVisitor<CustomAttributeTypedArgument, O> visitor
-    ) =>
-        visitor.Visit(arg);
+    public static TO Accept<TO>(this CustomAttributeArgument element, IVisitor<CustomAttributeArgument, TO> visitor) =>
+        visitor.Visit(element);
 
     public static O Accept<O>(
-        this CustomAttributeNamedArgument arg,
+        this CustomAttributeNamedArgument element,
         IVisitor<CustomAttributeNamedArgument, O> visitor
     ) =>
-        visitor.Visit(arg);
+        visitor.Visit(element);
+
+    public static TO Accept<TO>(this TypeAttributes element, IVisitor<TypeAttributes, TO> visitor) =>
+        visitor.Visit(element);
+
+    public static TO Accept<TO>(this InterfaceImplementation element, IVisitor<InterfaceImplementation, TO> visitor) =>
+        visitor.Visit(element);
 }

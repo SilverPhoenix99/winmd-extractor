@@ -1,33 +1,24 @@
 ﻿namespace Winmd.JsonVisitors;
 
-using System.Reflection;
 using System.Text.Json.Nodes;
+using Mono.Cecil;
 
 class CustomAttributeArgumentVisitor :
-    IVisitor<CustomAttributeTypedArgument, JsonObject>,
+    IVisitor<CustomAttributeArgument, JsonObject>,
     IVisitor<CustomAttributeNamedArgument, JsonObject>
 {
-    public JsonObject Visit(CustomAttributeTypedArgument arg) => Create(null, false, arg);
+    public JsonObject Visit(CustomAttributeArgument arg) => AsJson(null, arg);
 
-    public JsonObject Visit(CustomAttributeNamedArgument arg) =>
-        Create(arg.MemberName, arg.IsField, arg.TypedValue);
+    public JsonObject Visit(CustomAttributeNamedArgument arg) => AsJson(arg.Name, arg.Argument);
 
-    private static JsonObject Create(string? name, bool isField, CustomAttributeTypedArgument arg) =>
-        Create(name, isField, arg.ArgumentType, arg.Value);
+    private static JsonObject AsJson(string? name, CustomAttributeArgument arg) =>
+        AsJson(name, arg.Type.Resolve(), arg.Value);
 
-    public static JsonObject Create(string? name, bool isField, Type argumentType, object? value)
-    {
-        if (argumentType.IsEnum && value is not null)
-        {
-            value = argumentType.GetEnumName(value) ?? value;
-        }
-
-        return new JsonObject
+    public static JsonObject AsJson(string? name, TypeDefinition argumentType, object? value) =>
+        new()
         {
             ["Name"] = name,
-            ["IsField"] = isField,
             ["Type"] = argumentType.FullName,
             ["Value"] = JsonValue.Create(value),
         };
-    }
 }
