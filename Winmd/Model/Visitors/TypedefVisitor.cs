@@ -1,6 +1,7 @@
 ﻿namespace Winmd.Model.Visitors;
 
 using System.Collections.Immutable;
+using ClassExtensions;
 using Mono.Cecil;
 
 class TypedefVisitor : BaseObjectVisitor<TypedefModel>
@@ -11,15 +12,18 @@ class TypedefVisitor : BaseObjectVisitor<TypedefModel>
 
     protected override TypedefModel CreateModel(string name) => new(name);
 
-    public override TypedefModel Visit(TypeDefinition value)
+    public override TypedefModel Visit(TypeDefinition type)
     {
-        var model = base.Visit(value);
+        var model = base.Visit(type);
+
+        var fieldType = type.Fields
+            .First(f => f.IsPublic && !f.IsStatic)
+            .FieldType;
+
+        model.SourceType = fieldType.Accept(TypeVisitor.Instance);
 
         model.Attributes = model.Attributes
-            .Where(a =>
-                a.Name != "NativeTypedef"
-                && a.Namespace != "Windows.Win32.Foundation.Metadata"
-            )
+            .Where(a => a.Name != "NativeTypedef" && a.Namespace != "Windows.Win32.Foundation.Metadata")
             .ToImmutableList();
 
         return model;

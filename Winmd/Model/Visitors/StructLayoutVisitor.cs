@@ -43,8 +43,8 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
         };
 
         if (
-            layout == LayoutKind.Auto
-            && charSet == CharSet.Auto
+            (layout == LayoutKind.Auto || (type.IsValueType && layout == LayoutKind.Sequential))
+            && charSet is CharSet.Auto or CharSet.Ansi
             && type is { PackingSize: < 1, ClassSize: < 1 }
         )
         {
