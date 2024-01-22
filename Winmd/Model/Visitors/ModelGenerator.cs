@@ -1,23 +1,27 @@
 ﻿namespace Winmd.Model.Visitors;
 
+using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
-class ModelGenerator : IVisitor<TypeDefinition, BaseObjectModel>
+class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 {
     public static readonly ModelGenerator Instance = new();
 
     private ModelGenerator() {}
 
-    public BaseObjectModel Visit(TypeDefinition value)
+    public IImmutableList<BaseObjectModel> Visit(TypeDefinition value)
     {
+        Func<BaseObjectModel, ImmutableList<BaseObjectModel>> list = ImmutableList.Create;
+
         var modelType = GetModelType(value);
+
         return modelType switch
         {
-            ModelType.Enum => value.Accept(EnumVisitor.Instance),
-            ModelType.Callback => value.Accept(CallbackVisitor.Instance),
-            ModelType.Typedef => value.Accept(TypedefVisitor.Instance),
-            _ => value.Accept(new ObjectVisitor(modelType))
+            ModelType.Enum => list(value.Accept(EnumVisitor.Instance)),
+            ModelType.Callback => list(value.Accept(CallbackVisitor.Instance)),
+            ModelType.Typedef => list(value.Accept(TypedefVisitor.Instance)),
+            _ => list(value.Accept(new ObjectVisitor(modelType)))
         };
     }
 

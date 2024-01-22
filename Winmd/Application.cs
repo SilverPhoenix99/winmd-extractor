@@ -36,10 +36,9 @@ jsonOptions.MakeReadOnly();
 
 foreach (var groupedTypes in allTypes)
 {
-    var types =
-        from t in groupedTypes
-        orderby t.Name
-        select t.Accept(ModelGenerator.Instance);
+    var types = groupedTypes
+        .OrderBy(t => t.Name)
+        .SelectMany(t => t.Accept(ModelGenerator.Instance));
 
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
 
