@@ -4,13 +4,13 @@ using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
-class CustomAttributeVisitor : IVisitor<CustomAttribute, CustomAttributeModel>
+class CustomAttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
 {
     public static readonly CustomAttributeVisitor Instance = new();
 
     private CustomAttributeVisitor() {}
 
-    public CustomAttributeModel Visit(CustomAttribute value)
+    public AttributeModel Visit(CustomAttribute value)
     {
         var (name, ns) = value.AttributeType.GetQualifiedName();
         if (name.EndsWith("Attribute"))
@@ -20,13 +20,13 @@ class CustomAttributeVisitor : IVisitor<CustomAttribute, CustomAttributeModel>
 
         var ctorArgs =
             from arg in value.ConstructorArguments
-            select arg.Accept<CustomAttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
+            select arg.Accept<AttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
 
         var namedArgs =
             from arg in value.Fields.Concat(value.Properties)
-            select arg.Accept<CustomAttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
+            select arg.Accept<AttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
 
-        return new CustomAttributeModel(name)
+        return new AttributeModel(name)
         {
             Namespace = ns,
             Arguments = ctorArgs.Concat(namedArgs).ToImmutableList()

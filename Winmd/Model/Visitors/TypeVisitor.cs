@@ -6,6 +6,8 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
 {
     public static readonly TypeVisitor Instance = new();
 
+    // TODO: Cache types
+
     private TypeVisitor() {}
 
     public TypeModel Visit(TypeReference type)
@@ -29,7 +31,7 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             }
             else {
                 // IsArray
-                // var dimensions = t.MakeArrayType().Dimensions
+                var dimensions = ((ArrayType) type).Dimensions;
                 //     .Select()
                 //     .Reverse();
             }

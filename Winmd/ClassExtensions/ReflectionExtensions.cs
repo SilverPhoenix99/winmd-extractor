@@ -4,6 +4,20 @@ using Mono.Cecil;
 
 static class ReflectionExtensions
 {
+    public static (string Name, string? Namespace) GetQualifiedName(this Type type)
+    {
+        var name = type.Name;
+        if (type.BaseType == typeof(Attribute) && name.EndsWith("Attribute"))
+        {
+            name = name[..^9];
+        }
+
+        return (
+            name,
+            type.Namespace != "System" ? type.Namespace : null
+        );
+    }
+
     public static TO Accept<TO>(this CustomAttribute element, IVisitor<CustomAttribute, TO> visitor) =>
         visitor.Visit(element);
 

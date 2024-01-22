@@ -9,19 +9,25 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
 {
     protected abstract T CreateModel(string name);
 
-    public virtual T Visit(TypeDefinition value)
+    public virtual T Visit(TypeDefinition type)
     {
-        var model = CreateModel(value.Name);
-        model.Attributes = value.Attributes.Accept(FlagsEnumVisitor.Instance);
-        model.ClassSize = value.ClassSize > 0 ? value.ClassSize : null;
-        model.PackingSize = value.PackingSize > 0 ? value.PackingSize : null;
-        model.CustomAttributes = Visit(value.CustomAttributes);
+        var model = CreateModel(type.Name);
+
+        var structLayout = type.Accept(StructLayoutVisitor.Instance);
+
+        var attributes = Visit(type.CustomAttributes);
+        if (structLayout is not null)
+        {
+            attributes.Insert(0, structLayout);
+        }
+
+        model.Attributes = attributes.ToImmutableList();
 
         return model;
     }
 
-    private static ImmutableList<CustomAttributeModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
+    private static List<AttributeModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
         customAttributes
             .Select(a => a.Accept(CustomAttributeVisitor.Instance))
-            .ToImmutableList();
+            .ToList();
 }
