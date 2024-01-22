@@ -38,7 +38,13 @@ foreach (var groupedTypes in allTypes)
 {
     var types = groupedTypes
         .OrderBy(t => t.Name)
-        .SelectMany(t => t.Accept(ModelGenerator.Instance));
+        .SelectMany(t => t.Accept(ModelGenerator.Instance))
+        .ToArray();
+
+    if (types.IsEmpty())
+    {
+        continue;
+    }
 
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
 

@@ -1,5 +1,6 @@
 ﻿namespace Winmd.Model.Visitors;
 
+using ClassExtensions;
 using Mono.Cecil;
 
 class TypeVisitor : IVisitor<TypeReference, TypeModel>
@@ -37,7 +38,7 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             }
         }
 
-        if (modifiers.Count == 0)
+        if (modifiers.IsEmpty())
         {
             modifiers = null;
         }
