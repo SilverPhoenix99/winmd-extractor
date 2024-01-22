@@ -10,18 +10,18 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 
     private ModelGenerator() {}
 
-    public IImmutableList<BaseObjectModel> Visit(TypeDefinition value)
-    {
-        Func<BaseObjectModel, ImmutableList<BaseObjectModel>> list = ImmutableList.Create;
+    private static readonly Func<BaseObjectModel, ImmutableList<BaseObjectModel>> List = ImmutableList.Create;
 
-        var modelType = GetModelType(value);
+    public IImmutableList<BaseObjectModel> Visit(TypeDefinition type)
+    {
+        var modelType = GetModelType(type);
 
         return modelType switch
         {
-            ModelType.Enum => list(value.Accept(EnumVisitor.Instance)),
-            ModelType.Callback => list(value.Accept(CallbackVisitor.Instance)),
-            ModelType.Typedef => list(value.Accept(TypedefVisitor.Instance)),
-            _ => list(value.Accept(new ObjectVisitor(modelType)))
+            ModelType.Enum => List(type.Accept(EnumVisitor.Instance)),
+            ModelType.Callback => List(type.Accept(CallbackVisitor.Instance)),
+            ModelType.Typedef => List(type.Accept(TypedefVisitor.Instance)),
+            _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }
 
