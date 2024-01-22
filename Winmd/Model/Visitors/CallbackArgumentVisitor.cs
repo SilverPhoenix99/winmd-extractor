@@ -9,12 +9,12 @@ class CallbackArgumentVisitor : IVisitor<ParameterDefinition, CallbackArgumentMo
 
     private CallbackArgumentVisitor() {}
 
-    public CallbackArgumentModel Visit(ParameterDefinition value) =>
+    public CallbackArgumentModel Visit(ParameterDefinition parameter) =>
         new(
-            value.Name,
-            value.ParameterType.Accept(TypeVisitor.Instance)
+            parameter.Name,
+            parameter.ParameterType.Accept(TypeVisitor.Instance)
         )
         {
-            Attributes = value.Attributes.Accept(FlagsEnumVisitor.Instance)
+            Attributes = parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
         };
 }

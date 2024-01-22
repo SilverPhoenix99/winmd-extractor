@@ -10,5 +10,5 @@ class TypeModel(string name)
 class TypeModifier
 {
     public int? Pointer { get; set; }
-    public int[]? Array { get; set; }
+    public int? Array { get; set; }
 }
