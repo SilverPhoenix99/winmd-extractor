@@ -21,6 +21,7 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
             ModelType.Enum => List(type.Accept(EnumVisitor.Instance)),
             ModelType.Callback => List(type.Accept(CallbackVisitor.Instance)),
             ModelType.Typedef => List(type.Accept(TypedefVisitor.Instance)),
+            ModelType.Apis => type.Accept(ApisVisitor.Instance),
             _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }
