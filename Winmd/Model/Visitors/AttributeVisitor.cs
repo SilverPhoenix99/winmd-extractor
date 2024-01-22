@@ -4,11 +4,11 @@ using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
-class CustomAttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
+class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
 {
-    public static readonly CustomAttributeVisitor Instance = new();
+    public static readonly AttributeVisitor Instance = new();
 
-    private CustomAttributeVisitor() {}
+    private AttributeVisitor() {}
 
     public AttributeModel Visit(CustomAttribute value)
     {
@@ -20,11 +20,11 @@ class CustomAttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
 
         var ctorArgs =
             from arg in value.ConstructorArguments
-            select arg.Accept<AttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
+            select arg.Accept<AttributeArgumentModel>(AttributeArgumentVisitor.Instance);
 
         var namedArgs =
             from arg in value.Fields.Concat(value.Properties)
-            select arg.Accept<AttributeArgumentModel>(CustomAttributeArgumentVisitor.Instance);
+            select arg.Accept<AttributeArgumentModel>(AttributeArgumentVisitor.Instance);
 
         return new AttributeModel(name)
         {

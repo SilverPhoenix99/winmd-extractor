@@ -28,6 +28,6 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
 
     private static List<AttributeModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
         customAttributes
-            .Select(a => a.Accept(CustomAttributeVisitor.Instance))
+            .Select(a => a.Accept(AttributeVisitor.Instance))
             .ToList();
 }

@@ -3,13 +3,13 @@
 using ClassExtensions;
 using Mono.Cecil;
 
-class CustomAttributeArgumentVisitor :
+class AttributeArgumentVisitor :
     IVisitor<CustomAttributeArgument, AttributeArgumentModel>,
     IVisitor<CustomAttributeNamedArgument, AttributeArgumentModel>
 {
-    public static readonly CustomAttributeArgumentVisitor Instance = new();
+    public static readonly AttributeArgumentVisitor Instance = new();
 
-    private CustomAttributeArgumentVisitor() {}
+    private AttributeArgumentVisitor() {}
 
     public AttributeArgumentModel Visit(CustomAttributeArgument value) =>
         ToModel(null, value.Type.Resolve(), value.Value);
