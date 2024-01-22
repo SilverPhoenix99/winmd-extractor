@@ -47,7 +47,6 @@ foreach (var groupedTypes in allTypes)
     }
 
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
-
-    var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+    using var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
     JsonSerializer.Serialize(output, types, jsonOptions);
 }
