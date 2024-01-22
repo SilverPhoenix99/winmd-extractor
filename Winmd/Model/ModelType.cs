@@ -2,11 +2,12 @@
 
 enum ModelType
 {
-    Interface, // COM interfaces?
-    Enum,
-    Callback,
-    Struct,   // struct or union
-    Typedef,
-    Object    // class Apis - the list of available functions
+    Apis,      // class Apis - the list of available constants and functions
     // Attribute - not used
+    Callback,
+    Enum,
+    Interface, // COM interfaces?
+    Struct,    // struct or union
+    Typedef,
+    Object,    // generic fallback
 }

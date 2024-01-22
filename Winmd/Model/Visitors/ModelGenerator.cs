@@ -26,8 +26,13 @@ class ModelGenerator : IVisitor<TypeDefinition, BaseObjectModel>
         return type.IsInterface ? ModelType.Interface
             : type.IsEnum ? ModelType.Enum
             : type.IsDelegate() ? ModelType.Callback
-            : !type.IsValueType ? ModelType.Object
-            : type.IsTypedef() ? ModelType.Typedef
-            : ModelType.Struct;
+            : type.IsValueType ? GetStructType(type)
+            : GetClassType(type);
     }
+
+    private static ModelType GetStructType(TypeDefinition type) =>
+        type.IsTypedef() ? ModelType.Typedef : ModelType.Struct;
+
+    private static ModelType GetClassType(IMemberDefinition type) =>
+        type.Name == "Apis" ? ModelType.Apis : ModelType.Object;
 }
