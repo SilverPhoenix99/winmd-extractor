@@ -5,7 +5,7 @@ using ClassExtensions;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
-class EnumVisitor : BaseObjectModelVisitor<EnumModel>
+class EnumVisitor : BaseObjectVisitor<EnumModel>
 {
     public static readonly EnumVisitor Instance = new();
 

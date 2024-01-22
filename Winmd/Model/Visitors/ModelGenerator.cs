@@ -16,7 +16,7 @@ class ModelGenerator : IVisitor<TypeDefinition, BaseObjectModel>
         {
             ModelType.Enum => value.Accept(EnumVisitor.Instance),
             ModelType.Callback => value.Accept(CallbackVisitor.Instance),
-            _ => value.Accept(new ObjectModelVisitor(modelType))
+            _ => value.Accept(new ObjectVisitor(modelType))
         };
     }
 

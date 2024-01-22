@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
-abstract class BaseObjectModelVisitor<T> : IVisitor<TypeDefinition, T>
+abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
     where T : BaseObjectModel
 {
     protected abstract T CreateModel(string name);

@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
-class CallbackVisitor : BaseObjectModelVisitor<CallbackModel>
+class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 {
     public static readonly CallbackVisitor Instance = new();
 
@@ -12,13 +12,13 @@ class CallbackVisitor : BaseObjectModelVisitor<CallbackModel>
 
     protected override CallbackModel CreateModel(string name) => new(name);
 
-    public override CallbackModel Visit(TypeDefinition value)
+    public override CallbackModel Visit(TypeDefinition type)
     {
-        var method = value.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;
+        var method = type.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;
 
-        var model = base.Visit(value);
+        var model = base.Visit(type);
 
-        model.ReturnType = method.ReturnType.Resolve().Accept(TypeModelVisitor.Instance);
+        model.ReturnType = method.ReturnType.Accept(TypeVisitor.Instance);
 
         var args =
             from p in method.Parameters

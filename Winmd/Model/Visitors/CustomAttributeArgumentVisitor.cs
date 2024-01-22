@@ -17,15 +17,15 @@ class CustomAttributeArgumentVisitor :
     public CustomAttributeArgumentModel Visit(CustomAttributeNamedArgument value) =>
         ToModel(
             value.Name,
-            value.Argument.Type.Resolve(),
+            value.Argument.Type,
             value.Argument.Value
         );
 
-    private static CustomAttributeArgumentModel ToModel(string? name, TypeDefinition argumentType, object? value) =>
+    private static CustomAttributeArgumentModel ToModel(string? name, TypeReference argumentType, object? value) =>
         new(
             name: name,
-            value: ParseValue(argumentType, value),
-            type: argumentType.Accept(TypeModelVisitor.Instance)
+            value: ParseValue(argumentType.Resolve(), value),
+            type: argumentType.Accept(TypeVisitor.Instance)
         );
 
     private static object? ParseValue(TypeDefinition argumentType, object? value) =>
