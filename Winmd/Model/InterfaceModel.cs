@@ -2,5 +2,5 @@
 
 class InterfaceModel(string name) : BaseObjectModel(name)
 {
-    public override ModelType @Type => ModelType.Interface;
+    public override ModelType Type => ModelType.Interface;
 }
