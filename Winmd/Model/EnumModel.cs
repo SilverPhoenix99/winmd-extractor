@@ -8,3 +8,9 @@ class EnumModel(string name) : BaseObjectModel(name)
     public string? EnumType { get; set; }
     public IImmutableList<EnumMemberModel> Members { get; set; } = ImmutableList<EnumMemberModel>.Empty;
 }
+
+class EnumMemberModel(string name, object? constant)
+{
+    public string Name => name;
+    public object? Constant => constant;
+}

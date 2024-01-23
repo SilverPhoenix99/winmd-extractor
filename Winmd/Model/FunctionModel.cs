@@ -13,3 +13,10 @@ class CallbackModel(string name) : FunctionModel(name)
 {
     public override ModelType Type => ModelType.Callback;
 }
+
+class FunctionArgumentModel(string name, TypeModel type)
+{
+    public string Name => name;
+    public IImmutableList<AttributeModel>? Attributes { get; set; }
+    public TypeModel Type => type;
+}
