@@ -6,7 +6,7 @@ class FunctionModel(string name) : BaseObjectModel(name)
 {
     public override ModelType Type => ModelType.Function;
     public TypeModel ReturnType { get; set; } = null!;
-    public IImmutableList<CallbackArgumentModel> Arguments { get; set; } = ImmutableList<CallbackArgumentModel>.Empty;
+    public IImmutableList<FunctionArgumentModel> Arguments { get; set; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
 
 class CallbackModel(string name) : FunctionModel(name)

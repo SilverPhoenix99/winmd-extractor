@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-class CallbackArgumentModel(string name, TypeModel type)
+class FunctionArgumentModel(string name, TypeModel type)
 {
     public string Name => name;
     public IImmutableSet<string> Attributes { get; set; } = ImmutableSortedSet<string>.Empty;

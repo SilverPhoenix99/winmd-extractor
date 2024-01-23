@@ -31,7 +31,7 @@ class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 
         var args =
             from p in method.Parameters
-            select p.Accept(CallbackArgumentVisitor.Instance);
+            select p.Accept(FunctionArgumentVisitor.Instance);
 
         model.Arguments = args.ToImmutableList();
 

@@ -3,13 +3,13 @@
 using ClassExtensions;
 using Mono.Cecil;
 
-class CallbackArgumentVisitor : IVisitor<ParameterDefinition, CallbackArgumentModel>
+class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentModel>
 {
-    public static readonly CallbackArgumentVisitor Instance = new();
+    public static readonly FunctionArgumentVisitor Instance = new();
 
-    private CallbackArgumentVisitor() {}
+    private FunctionArgumentVisitor() {}
 
-    public CallbackArgumentModel Visit(ParameterDefinition parameter) =>
+    public FunctionArgumentModel Visit(ParameterDefinition parameter) =>
         new(
             parameter.Name,
             parameter.ParameterType.Accept(TypeVisitor.Instance)

@@ -34,7 +34,7 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
             Attributes = attributes.IsEmpty ? null : attributes,
             ReturnType = method.ReturnType.Accept(TypeVisitor.Instance),
             Arguments = method.Parameters
-                .Select(arg => arg.Accept(CallbackArgumentVisitor.Instance))
+                .Select(arg => arg.Accept(FunctionArgumentVisitor.Instance))
                 .ToImmutableList()
         };
     }
