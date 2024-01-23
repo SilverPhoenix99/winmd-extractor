@@ -13,14 +13,15 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
     public FunctionModel Visit(MethodDefinition method)
     {
         var attributes = method.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance));
+            .Select(a => a.Accept(AttributeVisitor.Instance))
+            .ToImmutableList();
 
         // TODO: method.PInvokeInfo -> DllImport attribute
         // TODO: method.MethodReturnType.CustomAttributes
 
         return new FunctionModel(method.Name)
         {
-            Attributes = attributes.ToImmutableList(),
+            Attributes = attributes.IsEmpty ? null : attributes,
             ReturnType = method.ReturnType.Accept(TypeVisitor.Instance),
             Arguments = method.Parameters
                 .Select(arg => arg.Accept(CallbackArgumentVisitor.Instance))

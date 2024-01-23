@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Immutable;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Mono.Cecil;
@@ -39,9 +40,9 @@ foreach (var groupedTypes in allTypes)
     var types = groupedTypes
         .OrderBy(t => t.Name)
         .SelectMany(t => t.Accept(ModelGenerator.Instance))
-        .ToArray();
+        .ToImmutableList();
 
-    if (types.IsEmpty())
+    if (types.IsEmpty)
     {
         continue;
     }

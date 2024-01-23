@@ -6,7 +6,7 @@ abstract class BaseObjectModel(string name)
 {
     public abstract ModelType Type { get; }
     public string Name => name;
-    public IImmutableList<AttributeModel> Attributes { get; set; } = ImmutableList<AttributeModel>.Empty;
+    public IImmutableList<AttributeModel>? Attributes { get; set; }
 }
 
 class ObjectModel(ModelType type, string name) : BaseObjectModel(name)

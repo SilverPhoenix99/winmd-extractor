@@ -30,11 +30,13 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
+            var attrs = this.attributes.Value
+                .Where(a => a != guidAttribute)
+                .ToImmutableList();
+
             return new ConstantModel(field.Name, TypeModel.GuidType)
             {
-                Attributes = attributes.Value
-                    .Where(a => a != guidAttribute)
-                    .ToImmutableList(),
+                Attributes = attrs.IsEmpty ? null : attrs,
                 Value = guidAttribute.Arguments[0].Value!,
                 ValueType = TypeModel.StringType
             };
@@ -58,11 +60,13 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
+            var attrs = attributes.Value
+                .Where(a => a != constAttribute)
+                .ToImmutableList();
+
             return new ConstantModel(field.Name, FieldType)
             {
-                Attributes = attributes.Value
-                    .Where(a => a != constAttribute)
-                    .ToImmutableList(),
+                Attributes = attrs.IsEmpty ? null : attrs,
                 Value = constAttribute.Arguments[0].Value!,
                 ValueType = TypeModel.StringType
             };
@@ -72,7 +76,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
         {
             var model = new ConstantModel(field.Name, FieldType)
             {
-                Attributes = attributes.Value
+                Attributes = attributes.Value.IsEmpty ? null : attributes.Value
             };
 
             if (!field.HasConstant)

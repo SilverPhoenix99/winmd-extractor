@@ -22,9 +22,14 @@ class TypedefVisitor : BaseObjectVisitor<TypedefModel>
 
         model.SourceType = fieldType.Accept(TypeVisitor.Instance);
 
-        model.Attributes = model.Attributes
-            .Where(a => a.Name != "NativeTypedef" && a.Namespace != "Windows.Win32.Foundation.Metadata")
+        var attributes = model.Attributes
+            ?.Where(a => a.Name != "NativeTypedef" && a.Namespace != "Windows.Win32.Foundation.Metadata")
             .ToImmutableList();
+
+        if (!attributes?.IsEmpty ?? true)
+        {
+            model.Attributes = attributes;
+        }
 
         return model;
     }

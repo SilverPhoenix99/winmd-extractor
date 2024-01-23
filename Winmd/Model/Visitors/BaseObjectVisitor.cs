@@ -21,7 +21,10 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
             attributes.Insert(0, structLayout);
         }
 
-        model.Attributes = attributes.ToImmutableList();
+        if (!attributes.IsEmpty())
+        {
+            model.Attributes = attributes.ToImmutableList();
+        }
 
         return model;
     }
