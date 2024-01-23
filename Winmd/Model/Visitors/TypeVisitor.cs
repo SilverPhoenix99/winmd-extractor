@@ -33,9 +33,8 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             }
             else {
                 // IsArray
-                var dimensions = ((ArrayType) type).Dimensions;
-                //     .Select()
-                //     .Reverse();
+                // var dimensions = ((ArrayType) type).Dimensions;
+                throw new NotImplementedException("TO DO: Array Types");
             }
         }
 

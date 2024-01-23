@@ -20,6 +20,15 @@ class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 
         model.ReturnType = method.ReturnType.Accept(TypeVisitor.Instance);
 
+        var returnAttributes = method.MethodReturnType.CustomAttributes
+            .Select(a => a.Accept(AttributeVisitor.Instance))
+            .ToImmutableList();
+
+        if (!returnAttributes.IsEmpty)
+        {
+            model.ReturnType.Attributes = returnAttributes;
+        }
+
         var args =
             from p in method.Parameters
             select p.Accept(CallbackArgumentVisitor.Instance);

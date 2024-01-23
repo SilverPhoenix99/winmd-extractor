@@ -16,8 +16,18 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
             .Select(a => a.Accept(AttributeVisitor.Instance))
             .ToImmutableList();
 
+        var returnType = method.ReturnType.Accept(TypeVisitor.Instance);
+
+        var returnAttributes = method.MethodReturnType.CustomAttributes
+            .Select(a => a.Accept(AttributeVisitor.Instance))
+            .ToImmutableList();
+
+        if (!returnAttributes.IsEmpty)
+        {
+            returnType.Attributes = returnAttributes;
+        }
+
         // TODO: method.PInvokeInfo -> DllImport attribute
-        // TODO: method.MethodReturnType.CustomAttributes
 
         return new FunctionModel(method.Name)
         {

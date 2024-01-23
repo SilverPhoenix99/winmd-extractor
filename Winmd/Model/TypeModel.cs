@@ -9,6 +9,9 @@ class TypeModel(string name, string? @namespace = null)
     public string Name => name;
     public string? Namespace => @namespace;
     public IImmutableList<TypeModifier>? Modifiers { get; set; }
+    public IImmutableList<AttributeModel>? Attributes { get; set; }
+
+    #region Constants
 
     public static readonly TypeModel GuidType = new("Guid");
 
@@ -16,6 +19,8 @@ class TypeModel(string name, string? @namespace = null)
     public static readonly TypeModel LayoutKindType = new(LayoutKindName.Name, LayoutKindName.Namespace);
 
     public static readonly TypeModel StringType = new("String");
+
+    #endregion
 }
 
 class TypeModifier
