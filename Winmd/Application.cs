@@ -11,6 +11,10 @@ var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 var generatedPath = Path.Combine(executableDirectory, "generated");
 Directory.CreateDirectory(generatedPath);
+foreach (var file in Directory.EnumerateDirectories(generatedPath))
+{
+    File.Delete(file);
+}
 
 var winmdAssemblies = Directory.GetFiles(executableDirectory, "*.winmd");
 
