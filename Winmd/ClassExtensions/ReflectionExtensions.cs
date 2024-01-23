@@ -24,9 +24,9 @@ static class ReflectionExtensions
     public static TO Accept<TO>(this CustomAttributeArgument element, IVisitor<CustomAttributeArgument, TO> visitor) =>
         visitor.Visit(element);
 
-    public static O Accept<O>(
+    public static TO Accept<TO>(
         this CustomAttributeNamedArgument element,
-        IVisitor<CustomAttributeNamedArgument, O> visitor
+        IVisitor<CustomAttributeNamedArgument, TO> visitor
     ) =>
         visitor.Visit(element);
 
@@ -40,5 +40,8 @@ static class ReflectionExtensions
         visitor.Visit(element);
 
     public static TO Accept<TO>(this ParameterDefinition element, IVisitor<ParameterDefinition, TO> visitor) =>
+        visitor.Visit(element);
+
+    public static TO Accept<TO>(this MethodDefinition element, IVisitor<MethodDefinition, TO> visitor) =>
         visitor.Visit(element);
 }
