@@ -12,11 +12,13 @@ class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentMo
 
     public FunctionArgumentModel Visit(ParameterDefinition parameter)
     {
-        var attributes = new List<AttributeModel>();
+        var attributes = parameter.CustomAttributes
+            .Select(a => a.Accept(AttributeVisitor.Instance))
+            .ToList();
 
         if (!IsDefault(parameter.Attributes))
         {
-            attributes.Add(new AttributeModel("ParameterFlags")
+            attributes.Insert(0, new AttributeModel("ParameterFlags")
             {
                 Arguments = parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
                     .Select(f => new AttributeArgumentModel(TypeModel.StringType, f.ToString()))
