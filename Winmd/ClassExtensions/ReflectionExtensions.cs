@@ -7,9 +7,9 @@ static class ReflectionExtensions
     public static (string Name, string? Namespace) GetQualifiedName(this Type type)
     {
         var name = type.Name;
-        if (type.BaseType == typeof(Attribute) && name.EndsWith("Attribute"))
+        if (type.BaseType == typeof(Attribute))
         {
-            name = name[..^9];
+            name = name.StripEnd("Attribute");
         }
 
         return (

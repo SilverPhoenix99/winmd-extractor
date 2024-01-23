@@ -16,10 +16,7 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
     public AttributeModel Visit(CustomAttribute attribute)
     {
         var (name, @namespace) = attribute.AttributeType.GetQualifiedName();
-        if (name.EndsWith("Attribute"))
-        {
-            name = name[..^9];
-        }
+        name = name.StripEnd("Attribute");
 
         if (name == "Guid" && @namespace == "Windows.Win32.Foundation.Metadata")
         {
