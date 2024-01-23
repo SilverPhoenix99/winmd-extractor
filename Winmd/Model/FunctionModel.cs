@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 class FunctionModel(string name) : BaseObjectModel(name)
 {
     public override ModelType Type => ModelType.Function;
-    public TypeModel ReturnType { get; set; } = null!;
+    public ReturnModel Return { get; set; } = null!;
     public IImmutableList<FunctionArgumentModel> Arguments { get; set; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
 
@@ -19,4 +19,10 @@ class FunctionArgumentModel(string name, TypeModel type)
     public string Name => name;
     public IImmutableList<AttributeModel>? Attributes { get; set; }
     public TypeModel Type => type;
+}
+
+class ReturnModel(TypeModel type)
+{
+    public TypeModel Type => type;
+    public IImmutableList<AttributeModel>? Attributes { get; set; }
 }

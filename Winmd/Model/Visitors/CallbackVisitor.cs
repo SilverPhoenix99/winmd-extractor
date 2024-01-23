@@ -18,22 +18,11 @@ class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 
         var model = base.Visit(type);
 
-        model.ReturnType = method.ReturnType.Accept(TypeVisitor.Instance);
+        model.Return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
 
-        var returnAttributes = method.MethodReturnType.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
+        model.Arguments = method.Parameters
+            .Select(p => p.Accept(FunctionArgumentVisitor.Instance))
             .ToImmutableList();
-
-        if (!returnAttributes.IsEmpty)
-        {
-            model.ReturnType.Attributes = returnAttributes;
-        }
-
-        var args =
-            from p in method.Parameters
-            select p.Accept(FunctionArgumentVisitor.Instance);
-
-        model.Arguments = args.ToImmutableList();
 
         return model;
     }

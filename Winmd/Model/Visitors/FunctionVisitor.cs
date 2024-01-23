@@ -16,23 +16,12 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
             .Select(a => a.Accept(AttributeVisitor.Instance))
             .ToImmutableList();
 
-        var returnType = method.ReturnType.Accept(TypeVisitor.Instance);
-
-        var returnAttributes = method.MethodReturnType.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToImmutableList();
-
-        if (!returnAttributes.IsEmpty)
-        {
-            returnType.Attributes = returnAttributes;
-        }
-
         // TODO: method.PInvokeInfo -> DllImport attribute
 
         return new FunctionModel(method.Name)
         {
             Attributes = attributes.IsEmpty ? null : attributes,
-            ReturnType = method.ReturnType.Accept(TypeVisitor.Instance),
+            Return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance),
             Arguments = method.Parameters
                 .Select(arg => arg.Accept(FunctionArgumentVisitor.Instance))
                 .ToImmutableList()
