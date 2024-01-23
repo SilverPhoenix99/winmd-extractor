@@ -8,8 +8,6 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
 {
     public static readonly TypeVisitor Instance = new();
 
-    // TODO: Cache types
-
     private TypeVisitor() {}
 
     public TypeModel Visit(TypeReference type)
