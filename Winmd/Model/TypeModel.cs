@@ -1,5 +1,6 @@
 ﻿namespace Winmd.Model;
 
+using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using ClassExtensions;
 
@@ -7,7 +8,7 @@ class TypeModel(string name, string? @namespace = null)
 {
     public string Name => name;
     public string? Namespace => @namespace;
-    public TypeModifier[] Modifiers { get; set; } = Array.Empty<TypeModifier>();
+    public IImmutableList<TypeModifier>? Modifiers { get; set; }
 
     public static readonly TypeModel GuidType = new("Guid");
 

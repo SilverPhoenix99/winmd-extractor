@@ -1,5 +1,6 @@
 ﻿namespace Winmd.Model.Visitors;
 
+using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
 
@@ -45,7 +46,7 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             type.Namespace != "System" ? type.Namespace : null
         )
         {
-            Modifiers = modifiers.ToArray()
+            Modifiers = modifiers.IsEmpty() ? null : modifiers.ToImmutableList()
         };
     }
 }
