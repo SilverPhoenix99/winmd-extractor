@@ -5,6 +5,6 @@ using System.Collections.Immutable;
 class FunctionArgumentModel(string name, TypeModel type)
 {
     public string Name => name;
-    public IImmutableSet<string> Attributes { get; set; } = ImmutableSortedSet<string>.Empty;
+    public IImmutableList<AttributeModel>? Attributes { get; set; }
     public TypeModel Type => type;
 }

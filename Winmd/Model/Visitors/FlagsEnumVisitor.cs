@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Reflection;
 using ClassExtensions;
 
-class FlagsEnumVisitor : IVisitor<object, IImmutableSet<string>>
+class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
 {
     public static readonly FlagsEnumVisitor Instance = new();
 
@@ -13,7 +13,7 @@ class FlagsEnumVisitor : IVisitor<object, IImmutableSet<string>>
 
     private FlagsEnumVisitor() {}
 
-    public IImmutableSet<string> Visit(object value)
+    public IImmutableSet<Enum> Visit(object value)
     {
         var type = value.GetType();
         if (type.GetCustomAttribute(typeof(FlagsAttribute)) is null)
@@ -27,7 +27,7 @@ class FlagsEnumVisitor : IVisitor<object, IImmutableSet<string>>
         var attributes =
             from a in attributeSet
             where enumValue.HasFlag(a)
-            select a.ToString();
+            select a;
 
         return attributes.ToImmutableSortedSet();
     }
