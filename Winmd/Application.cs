@@ -42,7 +42,6 @@ jsonOptions.MakeReadOnly();
 foreach (var groupedTypes in allTypes)
 {
     var types = groupedTypes
-        .OrderBy(t => t.Name)
         .SelectMany(t => t.Accept(ModelGenerator.Instance))
         .ToImmutableList();
 
