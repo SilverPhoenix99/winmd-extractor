@@ -14,13 +14,6 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
     private static readonly (string Name, string Namespace) StructLayoutName =
         typeof(StructLayoutAttribute).GetQualifiedName()!;
 
-    private static readonly (string Name, string Namespace) LayoutKindName = typeof(LayoutKind).GetQualifiedName()!;
-
-    private static readonly TypeModel LayoutKindType = new(LayoutKindName.Name)
-    {
-        Namespace = LayoutKindName.Namespace
-    };
-
     private StructLayoutVisitor() {}
 
     [SuppressMessage("ReSharper", "SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault")]
@@ -53,7 +46,7 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
 
         var args = new List<AttributeArgumentModel>
         {
-            new(LayoutKindType, layout.ToString())
+            new(TypeModel.LayoutKindType, layout.ToString())
         };
 
         if (charSet != CharSet.Ansi)

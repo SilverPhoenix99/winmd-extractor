@@ -38,19 +38,14 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             }
         }
 
-        if (modifiers.IsEmpty())
-        {
-            modifiers = null;
-        }
-        else
-        {
-            modifiers.Reverse();
-        }
+        modifiers.Reverse();
 
-        return new TypeModel(type.Name)
+        return new TypeModel(
+            type.Name,
+            type.Namespace != "System" ? type.Namespace : null
+        )
         {
-            Namespace = type.Namespace != "System" ? type.Namespace : null,
-            Modifiers = modifiers?.ToArray()
+            Modifiers = modifiers.ToArray()
         };
     }
 }

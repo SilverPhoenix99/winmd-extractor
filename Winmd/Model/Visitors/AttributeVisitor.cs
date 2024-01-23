@@ -11,8 +11,6 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
 
     private static readonly (string Name, string Namespace) GuidName = typeof(GuidAttribute).GetQualifiedName()!;
 
-    private static readonly TypeModel StringType = new("String");
-
     private AttributeVisitor() {}
 
     public AttributeModel Visit(CustomAttribute attribute)
@@ -56,7 +54,7 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
         {
             Namespace = GuidName.Namespace,
             Arguments = ImmutableList.Create(new AttributeArgumentModel(
-                StringType,
+                TypeModel.StringType,
                 guid.ToString()
             ))
         };
