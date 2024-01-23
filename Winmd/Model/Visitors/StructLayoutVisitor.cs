@@ -27,17 +27,17 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
             _ => throw new UnreachableException()
         };
 
-        var charSet = (type.Attributes & TypeAttributes.StringFormatMask) switch
+        CharSet? charSet = (type.Attributes & TypeAttributes.StringFormatMask) switch
         {
-            TypeAttributes.AnsiClass => CharSet.Ansi,
+            TypeAttributes.AnsiClass => null, // defaults
+            TypeAttributes.AutoClass => null,
             TypeAttributes.UnicodeClass => CharSet.Unicode,
-            TypeAttributes.AutoClass => CharSet.Auto,
             _ => throw new UnreachableException()
         };
 
         if (
             (layout == LayoutKind.Auto || (type.IsValueType && layout == LayoutKind.Sequential))
-            && charSet is CharSet.Auto or CharSet.Ansi
+            && charSet is null
             && type is { PackingSize: < 1, ClassSize: < 1 }
         )
         {

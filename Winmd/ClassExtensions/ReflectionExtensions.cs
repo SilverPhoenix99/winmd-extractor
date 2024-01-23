@@ -47,4 +47,6 @@ static class ReflectionExtensions
 
     public static TO Accept<TO>(this MethodReturnType element, IVisitor<MethodReturnType, TO> visitor) =>
         visitor.Visit(element);
+
+    public static TO Accept<TO>(this PInvokeInfo element, IVisitor<PInvokeInfo, TO> visitor) => visitor.Visit(element);
 }

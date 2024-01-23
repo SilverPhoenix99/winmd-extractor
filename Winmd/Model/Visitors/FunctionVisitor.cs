@@ -14,13 +14,17 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
     {
         var attributes = method.CustomAttributes
             .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToImmutableList();
+            .ToList();
 
-        // TODO: method.PInvokeInfo -> DllImport attribute
+        var pInvokeAttribute = method.Accept(PInvokeInfoVisitor.Instance);
+        if (pInvokeAttribute != null)
+        {
+            attributes.Insert(0, pInvokeAttribute);
+        }
 
         return new FunctionModel(method.Name)
         {
-            Attributes = attributes.IsEmpty ? null : attributes,
+            Attributes = attributes.IsEmpty() ? null : attributes.ToImmutableList(),
             Return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance),
             Arguments = method.Parameters
                 .Select(arg => arg.Accept(FunctionArgumentVisitor.Instance))
