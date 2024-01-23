@@ -60,7 +60,7 @@ class ObjectModelConverter : JsonConverter<BaseObjectModel>
 
         while (baseType is not null && baseType != typeof(object))
         {
-            if (baseType.GetProperty(property.Name) != null)
+            if (baseType.GetProperty(property.Name) is not null)
             {
                 type = baseType;
             }

@@ -24,7 +24,7 @@ class AttributeArgumentVisitor :
     private static AttributeArgumentModel ToModel(string? name, TypeReference argumentType, object? value)
     {
         var parseValue = ParseValue(argumentType.Resolve(), value);
-        return name != null
+        return name is not null
             ? new AttributeArgumentModel(name, parseValue)
             : new AttributeArgumentModel(argumentType.Accept(TypeVisitor.Instance), parseValue);
     }
