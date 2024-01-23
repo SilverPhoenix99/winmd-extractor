@@ -9,7 +9,8 @@ enum ModelType
     Enum,
     Function,  // C functions
     Interface, // COM interfaces?
-    Struct,    // struct or union
+    Struct,
     Typedef,
+    Union,
     Object,    // generic fallback
 }
