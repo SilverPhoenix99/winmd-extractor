@@ -31,6 +31,7 @@ var jsonOptions = new JsonSerializerOptions
     WriteIndented = true,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     Converters =
     {
         new ObjectModelConverter(),

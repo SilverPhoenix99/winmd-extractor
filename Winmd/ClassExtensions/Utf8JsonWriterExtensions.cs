@@ -26,7 +26,8 @@ static class Utf8JsonWriterExtensions
 
         foreach (var property in properties)
         {
-            writer.WritePropertyName(property.Name);
+            var name = options.PropertyNamingPolicy?.ConvertName(property.Name) ?? property.Name;
+            writer.WritePropertyName(name);
             JsonSerializer.Serialize(writer, property.Value, property.Type, options);
         }
 
