@@ -22,7 +22,7 @@ var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 
 var allTypes = assembly.Modules
     .SelectMany(m => m.Types)
-    .Where(t => t.IsPublic && !t.IsNested) // Nested types are dealt recursively, so they need to be excluded here
+    .Where(t => t.IsPublic)
     .Where(t => t.BaseType?.FullName != "System.Attribute") // No need to generate attributes - their usage is enough
     .GroupBy(t => t.Namespace!);
 

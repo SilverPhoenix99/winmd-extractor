@@ -32,7 +32,7 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
             else {
                 // IsArray
                 // var dimensions = ((ArrayType) type).Dimensions;
-                throw new NotImplementedException("TO DO: Array Types");
+                throw new NotImplementedException("TODO: Array Types");
             }
         }
 

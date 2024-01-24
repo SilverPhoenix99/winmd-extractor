@@ -22,6 +22,7 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
             ModelType.Callback => List(type.Accept(CallbackVisitor.Instance)),
             ModelType.Typedef => List(type.Accept(TypedefVisitor.Instance)),
             ModelType.Apis => type.Accept(ApisVisitor.Instance),
+            ModelType.Struct => List(type.Accept(StructVisitor.Instance)),
             _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }
