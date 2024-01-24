@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
+using static ModelType;
 
 class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 {
@@ -18,27 +19,27 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 
         return modelType switch
         {
-            ModelType.Enum => List(type.Accept(EnumVisitor.Instance)),
-            ModelType.Callback => List(type.Accept(CallbackVisitor.Instance)),
-            ModelType.Typedef => List(type.Accept(TypedefVisitor.Instance)),
-            ModelType.Apis => type.Accept(ApisVisitor.Instance),
-            ModelType.Struct => List(type.Accept(StructVisitor.Instance)),
+            Apis => type.Accept(ApisVisitor.Instance),
+            Callback => List(type.Accept(CallbackVisitor.Instance)),
+            Enum => List(type.Accept(EnumVisitor.Instance)),
+            Struct => List(type.Accept(StructVisitor.Instance)),
+            Typedef => List(type.Accept(TypedefVisitor.Instance)),
             _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }
 
     private static ModelType GetModelType(TypeDefinition type)
     {
-        return type.IsInterface ? ModelType.Interface
-            : type.IsEnum ? ModelType.Enum
-            : type.IsDelegate() ? ModelType.Callback
+        return type.IsInterface ? Interface
+            : type.IsEnum ? Enum
+            : type.IsDelegate() ? Callback
             : type.IsValueType ? GetStructType(type)
             : GetClassType(type);
     }
 
     private static ModelType GetStructType(TypeDefinition type) =>
-        type.IsTypedef() ? ModelType.Typedef : ModelType.Struct;
+        type.IsTypedef() ? Typedef : Struct;
 
     private static ModelType GetClassType(IMemberDefinition type) =>
-        type.Name == "Apis" ? ModelType.Apis : ModelType.Object;
+        type.Name == "Apis" ? Apis : Object;
 }
