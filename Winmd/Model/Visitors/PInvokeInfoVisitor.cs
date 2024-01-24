@@ -24,57 +24,55 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
 
         var info = method.PInvokeInfo;
 
-        var args = new List<AttributeArgumentModel>
-        {
-            new(TypeModel.StringType, info.Module.Name)
-        };
+        var properties = new Dictionary<string, object>();
 
         if (info.EntryPoint != method.Name)
         {
-            args.Add(new AttributeArgumentModel("EntryPoint", info.EntryPoint));
+            properties["EntryPoint"] = info.EntryPoint;
         }
 
         var charSet = GetCharSet(info.Attributes);
         if (charSet is not null)
         {
-            args.Add(new AttributeArgumentModel("CharSet", charSet));
+            properties["CharSet"] = charSet;
         }
 
         if (info.IsNoMangle)
         {
-            args.Add(new AttributeArgumentModel("ExactSpelling", true));
+            properties["ExactSpelling"] = true;
         }
 
         if (info.SupportsLastError)
         {
-            args.Add(new AttributeArgumentModel("SetLastError", true));
+            properties["SetLastError"] = true;
         }
 
         if (!method.ImplAttributes.HasFlag(MethodImplAttributes.PreserveSig))
         {
-            args.Add(new AttributeArgumentModel("PreserveSig", false));
+            properties["PreserveSig"] = false;
         }
 
         var callingConvention = GetCallingConvention(info.Attributes);
         if (callingConvention is not null)
         {
-            args.Add(new AttributeArgumentModel("CallingConvention", callingConvention));
+            properties["CallingConvention"] = callingConvention;
         }
 
         if (info.IsBestFitDisabled)
         {
-            args.Add(new AttributeArgumentModel("BestFitMapping", false));
+            properties["BestFitMapping"] = false;
         }
 
         if (info.IsThrowOnUnmappableCharEnabled)
         {
-            args.Add(new AttributeArgumentModel("ThrowOnUnmappableChar", true));
+            properties["ThrowOnUnmappableChar"] = true;
         }
 
         return new AttributeModel(DllImport.Name)
         {
             Namespace = DllImport.Namespace,
-            Arguments = args.ToImmutableList()
+            Arguments = ImmutableList.Create( new AttributeArgumentModel(TypeModel.StringType, info.Module.Name)),
+            Properties = properties.ToImmutableDictionary()
         };
     }
 

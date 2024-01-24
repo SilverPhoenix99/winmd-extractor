@@ -24,18 +24,17 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
             return CreateGuid(attribute);
         }
 
-        var ctorArgs =
-            from arg in attribute.ConstructorArguments
-            select arg.Accept<AttributeArgumentModel>(AttributeArgumentVisitor.Instance);
-
-        var namedArgs =
-            from arg in attribute.Fields.Concat(attribute.Properties)
-            select arg.Accept<AttributeArgumentModel>(AttributeArgumentVisitor.Instance);
-
         return new AttributeModel(name)
         {
             Namespace = @namespace,
-            Arguments = ctorArgs.Concat(namedArgs).ToImmutableList()
+            Arguments = attribute.ConstructorArguments
+                .Select(arg => arg.Accept(AttributeArgumentVisitor.Instance))
+                .ToImmutableList(),
+            Properties = attribute.Fields.Concat(attribute.Properties)
+                .ToImmutableDictionary(
+                    a => a.Name,
+                    a => a.Argument.Value
+                )
         };
     }
 

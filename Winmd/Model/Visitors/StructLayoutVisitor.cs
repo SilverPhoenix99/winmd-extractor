@@ -44,30 +44,28 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
             return null;
         }
 
-        var args = new List<AttributeArgumentModel>
-        {
-            new(TypeModel.LayoutKindType, layout.ToString())
-        };
+        var properties = new Dictionary<string, object>();
 
-        if (charSet != CharSet.Ansi)
+        if (charSet is not null && charSet != CharSet.Ansi)
         {
-            args.Add(new AttributeArgumentModel("CharSet", charSet.ToString()));
+            properties["CharSet"] = charSet;
         }
 
         if (type.PackingSize > 0)
         {
-            args.Add(new AttributeArgumentModel("Pack", type.PackingSize));
+            properties["Pack"] = type.PackingSize;
         }
 
         if (type.ClassSize > 0)
         {
-            args.Add(new AttributeArgumentModel("Size", type.ClassSize));
+            properties["Size"] = type.ClassSize;
         }
 
         return new AttributeModel(StructLayoutName.Name)
         {
             Namespace = StructLayoutName.Namespace,
-            Arguments = args.ToImmutableList()
+            Arguments = ImmutableList.Create(new AttributeArgumentModel(TypeModel.LayoutKindType, layout.ToString())),
+            Properties = properties.ToImmutableDictionary()
         };
     }
 }
