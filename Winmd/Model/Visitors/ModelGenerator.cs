@@ -24,22 +24,22 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
             Enum => List(type.Accept(EnumVisitor.Instance)),
             Struct => List(type.Accept(StructVisitor.Instance)),
             Typedef => List(type.Accept(TypedefVisitor.Instance)),
+            Union => List(type.Accept(UnionVisitor.Instance)),
             _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }
 
-    private static ModelType GetModelType(TypeDefinition type)
-    {
-        return type.IsInterface ? Interface
-            : type.IsEnum ? Enum
-            : type.IsDelegate() ? Callback
-            : type.IsValueType ? GetStructType(type)
-            : GetClassType(type);
-    }
+    private static ModelType GetModelType(TypeDefinition type) =>
+        type.IsInterface ? Interface
+        : type.IsEnum ? Enum
+        : type.IsDelegate() ? Callback
+        : type.IsValueType ? GetStructType(type)
+        : GetClassType(type);
 
     private static ModelType GetStructType(TypeDefinition type) =>
-        type.IsTypedef() ? Typedef : Struct;
+        type.IsTypedef() ? Typedef
+        : type.IsExplicitLayout ? Union
+        : Struct;
 
-    private static ModelType GetClassType(IMemberDefinition type) =>
-        type.Name == "Apis" ? Apis : Object;
+    private static ModelType GetClassType(IMemberDefinition type) => type.Name == "Apis" ? Apis : Object;
 }
