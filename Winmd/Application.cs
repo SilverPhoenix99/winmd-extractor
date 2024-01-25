@@ -11,7 +11,7 @@ var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
 var generatedPath = Path.Combine(executableDirectory, "generated");
 Directory.CreateDirectory(generatedPath);
-foreach (var file in Directory.EnumerateDirectories(generatedPath))
+foreach (var file in Directory.EnumerateFiles(generatedPath))
 {
     File.Delete(file);
 }
