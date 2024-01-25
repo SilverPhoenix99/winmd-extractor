@@ -12,7 +12,7 @@ class AttributeArgumentVisitor : IVisitor<CustomAttributeArgument, AttributeArgu
     public AttributeArgumentModel Visit(CustomAttributeArgument argument)
     {
         var parseValue = ParseValue(argument.Type.Resolve(), argument.Value);
-        return new AttributeArgumentModel(argument.Type.Accept(TypeVisitor.Instance), parseValue);
+        return new AttributeArgumentModel(parseValue, argument.Type.Accept(TypeVisitor.Instance));
     }
 
     private static object? ParseValue(TypeDefinition argumentType, object? value) =>

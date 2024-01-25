@@ -10,29 +10,32 @@ class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentMo
 
     private FunctionArgumentVisitor() {}
 
-    public FunctionArgumentModel Visit(ParameterDefinition parameter)
+    public FunctionArgumentModel Visit(ParameterDefinition parameter) =>
+        new(
+            parameter.Name,
+            parameter.ParameterType.Accept(TypeVisitor.Instance),
+            GetAttributes(parameter)
+        );
+
+    private static ImmutableList<AttributeModel>? GetAttributes(ParameterDefinition parameter)
     {
-        var attributes = parameter.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToList();
+        var attributes = new List<AttributeModel>(
+            from a in parameter.CustomAttributes
+            select a.Accept(AttributeVisitor.Instance)
+        );
 
         if (!IsDefault(parameter.Attributes))
         {
             attributes.Insert(0, new AttributeModel("ParameterFlags")
             {
-                Arguments = parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
-                    .Select(f => new AttributeArgumentModel(TypeModel.StringType, f.ToString()))
-                    .ToImmutableList()
+                Arguments = ImmutableList.CreateRange(
+                    from f in parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
+                    select new AttributeArgumentModel(f.ToString(), TypeModel.StringType)
+                )
             });
         }
 
-        return new FunctionArgumentModel(
-            parameter.Name,
-            parameter.ParameterType.Accept(TypeVisitor.Instance)
-        )
-        {
-            Attributes = attributes.IsEmpty() ? null : attributes.ToImmutableList()
-        };
+        return attributes.IsEmpty() ? null : attributes.ToImmutableList();
     }
 
     private static bool IsDefault(ParameterAttributes attributes) =>

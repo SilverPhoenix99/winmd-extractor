@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using ClassExtensions;
 using Mono.Cecil;
+using static Mono.Cecil.TypeAttributes;
 
 class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
 {
@@ -19,19 +20,19 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
     [SuppressMessage("ReSharper", "SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault")]
     public AttributeModel? Visit(TypeDefinition type)
     {
-        var layout = (type.Attributes & TypeAttributes.LayoutMask) switch
+        var layout = (type.Attributes & LayoutMask) switch
         {
-            TypeAttributes.AutoLayout => LayoutKind.Auto,
-            TypeAttributes.SequentialLayout => LayoutKind.Sequential,
-            TypeAttributes.ExplicitLayout => LayoutKind.Explicit,
+            AutoLayout => LayoutKind.Auto,
+            SequentialLayout => LayoutKind.Sequential,
+            ExplicitLayout => LayoutKind.Explicit,
             _ => throw new UnreachableException()
         };
 
-        CharSet? charSet = (type.Attributes & TypeAttributes.StringFormatMask) switch
+        CharSet? charSet = (type.Attributes & StringFormatMask) switch
         {
-            TypeAttributes.AnsiClass => null, // defaults
-            TypeAttributes.AutoClass => null,
-            TypeAttributes.UnicodeClass => CharSet.Unicode,
+            AnsiClass => null, // defaults
+            AutoClass => null,
+            UnicodeClass => CharSet.Unicode,
             _ => throw new UnreachableException()
         };
 
@@ -61,10 +62,9 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
             properties["Size"] = type.ClassSize;
         }
 
-        return new AttributeModel(StructLayoutName.Name)
+        return new AttributeModel(StructLayoutName.Name, StructLayoutName.Namespace)
         {
-            Namespace = StructLayoutName.Namespace,
-            Arguments = ImmutableList.Create(new AttributeArgumentModel(TypeModel.LayoutKindType, layout.ToString())),
+            Arguments = ImmutableList.Create(new AttributeArgumentModel(layout.ToString(), TypeModel.LayoutKindType)),
             Properties = properties.ToImmutableDictionary()
         };
     }

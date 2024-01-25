@@ -14,13 +14,14 @@ class MethodReturnVisitor : IVisitor<MethodReturnType, ReturnModel>
     {
         var type = @return.ReturnType.Accept(TypeVisitor.Instance);
 
-        var returnAttributes = @return.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToImmutableList();
+        var returnAttributes = ImmutableList.CreateRange(
+            from a in @return.CustomAttributes
+            select a.Accept(AttributeVisitor.Instance)
+        );
 
-        return new ReturnModel(type)
-        {
-            Attributes = returnAttributes.IsEmpty ? null : returnAttributes
-        };
+        return new ReturnModel(
+            type,
+            returnAttributes.IsEmpty ? null : returnAttributes
+        );
     }
 }

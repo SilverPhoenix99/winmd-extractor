@@ -2,16 +2,10 @@
 
 using System.Collections.Immutable;
 
-class AttributeModel(string name)
+record AttributeModel(string Name, string? Namespace = null)
 {
-    public string Name => name;
-    public string? Namespace { get; set; }
-    public IImmutableList<AttributeArgumentModel> Arguments { get; set; } = ImmutableArray<AttributeArgumentModel>.Empty;
-    public IDictionary<string, object> Properties { get; set; } = ImmutableDictionary<string, object>.Empty;
+    public IImmutableList<AttributeArgumentModel> Arguments { get; init; } = ImmutableArray<AttributeArgumentModel>.Empty;
+    public IDictionary<string, object> Properties { get; init; } = ImmutableDictionary<string, object>.Empty;
 }
 
-class AttributeArgumentModel(TypeModel type, object? value)
-{
-    public object? Value => value;
-    public TypeModel Type => type;
-}
+record AttributeArgumentModel(object? Value, TypeModel Type);

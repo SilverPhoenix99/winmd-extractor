@@ -24,26 +24,23 @@ class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
         var attributeSet = Flags.ComputeIfMissing(type, ComputeFlags);
 
         var enumValue = (Enum) value;
-        var attributes =
+
+        return ImmutableSortedSet.CreateRange(
             from a in attributeSet
             where enumValue.HasFlag(a)
-            select a;
-
-        return attributes.ToImmutableSortedSet();
+            select a
+        );
     }
 
     private static ImmutableHashSet<Enum> ComputeFlags(Type type)
     {
         var underlyingType = Enum.GetUnderlyingType(type);
 
-        return type.GetEnumValues()
-            .Cast<Enum>()
-            .Where(e =>
-            {
-                dynamic value = Convert.ChangeType(e, underlyingType);
-                return BitOperations.IsPow2(value);
-            })
-            .ToImmutableHashSet();
+        return ImmutableHashSet.CreateRange(
+            from e in type.GetEnumValues().Cast<Enum>()
+            let value = Convert.ChangeType(e, underlyingType)
+            where BitOperations.IsPow2((dynamic) value)
+            select e
+        );
     }
-
 }

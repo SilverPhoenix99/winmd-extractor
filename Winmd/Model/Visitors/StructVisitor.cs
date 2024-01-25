@@ -6,36 +6,28 @@ class StructVisitor : BaseObjectVisitor<StructModel>
 {
     public static readonly StructVisitor Instance = new();
 
-    protected StructVisitor() {}
+    private StructVisitor() {}
 
     public override StructModel Visit(TypeDefinition type)
     {
-        var model = base.Visit(type);
-
         // TODO: Fields
         // TODO: Nested classes & anonymous structs/unions
 
-        return model;
+        return new StructModel(type.Name, GetAttributes(type));
     }
-
-    protected override StructModel CreateModel(string name) => new(name);
 }
 
-class UnionVisitor : StructVisitor
+class UnionVisitor : BaseObjectVisitor<UnionModel>
 {
-    public new static readonly UnionVisitor Instance = new();
+    public static readonly UnionVisitor Instance = new();
 
     private UnionVisitor() {}
 
-    protected override StructModel CreateModel(string name) => new UnionModel(name);
-
-    public override StructModel Visit(TypeDefinition type)
+    public override UnionModel Visit(TypeDefinition type)
     {
-        var model = base.Visit(type);
-
         // TODO: Remove attribute StructLayout(LayoutKind.Explicit) [default]
         // TODO: Remove attribute FieldOffset(0) from fields
 
-        return model;
+        return new UnionModel(type.Name, GetAttributes(type));
     }
 }

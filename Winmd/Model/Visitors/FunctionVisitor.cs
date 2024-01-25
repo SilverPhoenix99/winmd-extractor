@@ -12,23 +12,29 @@ class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
 
     public FunctionModel Visit(MethodDefinition method)
     {
-        var attributes = method.CustomAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToList();
+        var attributes = new List<AttributeModel>(
+            from a in method.CustomAttributes
+            select a.Accept(AttributeVisitor.Instance)
+        );
 
         var pInvokeAttribute = method.Accept(PInvokeInfoVisitor.Instance);
-        if (pInvokeAttribute != null)
+        if (pInvokeAttribute is not null)
         {
             attributes.Insert(0, pInvokeAttribute);
         }
 
-        return new FunctionModel(method.Name)
+        var @return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
+
+        return new FunctionModel(
+            method.Name,
+            attributes.IsEmpty() ? null : attributes.ToImmutableList(),
+            @return
+        )
         {
-            Attributes = attributes.IsEmpty() ? null : attributes.ToImmutableList(),
-            Return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance),
-            Arguments = method.Parameters
-                .Select(arg => arg.Accept(FunctionArgumentVisitor.Instance))
-                .ToImmutableList()
+            Arguments = ImmutableList.CreateRange(
+                from arg in method.Parameters
+                select arg.Accept(FunctionArgumentVisitor.Instance)
+            )
         };
     }
 }

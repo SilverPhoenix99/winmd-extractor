@@ -10,24 +10,33 @@ class TypedefVisitor : BaseObjectVisitor<TypedefModel>
 
     private TypedefVisitor() {}
 
-    protected override TypedefModel CreateModel(string name) => new(name);
-
     public override TypedefModel Visit(TypeDefinition type)
     {
-        var model = base.Visit(type);
-
         var fieldType = type.Fields
             .First(f => f.IsPublic && !f.IsStatic)
             .FieldType;
 
-        model.SourceType = fieldType.Accept(TypeVisitor.Instance);
+        return new TypedefModel(
+            type.Name,
+            GetAttributes(type),
+            fieldType.Accept(TypeVisitor.Instance)
+        );
+    }
 
-        var attributes = model.Attributes
-            ?.Where(a => a is not { Name: "NativeTypedef", Namespace: "Windows.Win32.Foundation.Metadata" })
-            .ToImmutableList();
+    protected override IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
+    {
+        var attributes = base.GetAttributes(type);
+        if (attributes is null)
+        {
+            return null;
+        }
 
-        model.Attributes = attributes?.IsEmpty == false ? attributes : null;
+        attributes = ImmutableList.CreateRange(
+            from a in attributes
+            where a is not { Name: "NativeTypedef", Namespace: "Windows.Win32.Foundation.Metadata" }
+            select a
+        );
 
-        return model;
+        return attributes.IsEmpty() ? null : attributes;
     }
 }

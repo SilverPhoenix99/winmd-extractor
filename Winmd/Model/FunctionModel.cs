@@ -2,27 +2,26 @@
 
 using System.Collections.Immutable;
 
-class FunctionModel(string name) : BaseObjectModel(name)
+class FunctionModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
+    : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Function;
-    public ReturnModel Return { get; set; } = null!;
-    public IImmutableList<FunctionArgumentModel> Arguments { get; set; } = ImmutableList<FunctionArgumentModel>.Empty;
+    public ReturnModel Return => @return;
+    public IImmutableList<FunctionArgumentModel> Arguments { get; init; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
 
-class CallbackModel(string name) : FunctionModel(name)
+class CallbackModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
+    : FunctionModel(name, attributes, @return)
 {
     public override ModelType Type => ModelType.Callback;
 }
 
-class FunctionArgumentModel(string name, TypeModel type)
+// Preserved as class, due to field's order
+class FunctionArgumentModel(string name, TypeModel type, IImmutableList<AttributeModel>? attributes)
 {
     public string Name => name;
-    public IImmutableList<AttributeModel>? Attributes { get; set; }
+    public IImmutableList<AttributeModel>? Attributes = attributes;
     public TypeModel Type => type;
 }
 
-class ReturnModel(TypeModel type)
-{
-    public TypeModel Type => type;
-    public IImmutableList<AttributeModel>? Attributes { get; set; }
-}
+record ReturnModel(TypeModel Type, IImmutableList<AttributeModel>? Attributes = null);

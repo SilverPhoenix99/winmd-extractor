@@ -1,6 +1,7 @@
 ﻿namespace Winmd.Model.Visitors;
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using ClassExtensions;
 using Mono.Cecil;
 
@@ -25,21 +26,25 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             }
 
             var guidAttribute = attributes.Value.FirstOrDefault(a => a.Name == TypeModel.GuidType.Name);
+
             if (guidAttribute is null)
             {
                 return null;
             }
 
-            var attrs = this.attributes.Value
-                .Where(a => a != guidAttribute)
-                .ToImmutableList();
+            var attrs = ImmutableList.CreateRange(
+                from a in attributes.Value
+                where a != guidAttribute
+                select a
+            );
 
-            return new ConstantModel(field.Name, TypeModel.GuidType)
-            {
-                Attributes = attrs.IsEmpty ? null : attrs,
-                Value = guidAttribute.Arguments[0].Value!,
-                ValueType = TypeModel.StringType
-            };
+            return new ConstantModel(
+                field.Name,
+                TypeModel.GuidType,
+                attrs.IsEmpty ? null : attrs,
+                guidAttribute.Arguments[0].Value!,
+                TypeModel.StringType
+            );
         }
 
         private ConstantModel? VisitConstant()
@@ -60,41 +65,45 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
-            var attrs = attributes.Value
-                .Where(a => a != constAttribute)
-                .ToImmutableList();
+            var attrs = ImmutableList.CreateRange(
+                from a in attributes.Value
+                where a != constAttribute
+                select a
+            );
 
-            return new ConstantModel(field.Name, FieldType)
-            {
-                Attributes = attrs.IsEmpty ? null : attrs,
-                Value = constAttribute.Arguments[0].Value!,
-                ValueType = TypeModel.StringType
-            };
+            return new ConstantModel(
+                field.Name,
+                FieldType,
+                attrs.IsEmpty ? null : attrs,
+                constAttribute.Arguments[0].Value!,
+                TypeModel.StringType
+            );
         }
 
         private ConstantModel VisitDefault()
         {
-            var model = new ConstantModel(field.Name, FieldType)
-            {
-                Attributes = attributes.Value.IsEmpty ? null : attributes.Value
-            };
-
             if (!field.HasConstant)
             {
-                return model;
+                throw new UnreachableException($"Constants should always have a value. Name = {field.FullName}");
             }
 
-            var value = model.Value = field.Constant!;
-            var constantName = value.GetType().GetQualifiedName();
-            model.ValueType = new TypeModel(constantName.Name, constantName.Namespace);
+            var value = field.Constant!;
+            var valueType = value.GetType().GetQualifiedName();
 
-            return model;
+            return new ConstantModel(
+                field.Name,
+                FieldType,
+                attributes.Value.IsEmpty ? null : attributes.Value,
+                value,
+                new TypeModel(valueType.Name, valueType.Namespace)
+            );
         }
 
         private readonly Lazy<ImmutableList<AttributeModel>> attributes = new(() =>
-            field.CustomAttributes
-                .Select(a => a.Accept(AttributeVisitor.Instance))
-                .ToImmutableList()
+            ImmutableList.CreateRange(
+                from a in field.CustomAttributes
+                select a.Accept(AttributeVisitor.Instance)
+            )
         );
 
         private TypeModel FieldType

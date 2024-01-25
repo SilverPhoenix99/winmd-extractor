@@ -10,20 +10,17 @@ class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 
     private CallbackVisitor() {}
 
-    protected override CallbackModel CreateModel(string name) => new(name);
-
     public override CallbackModel Visit(TypeDefinition type)
     {
         var method = type.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;
+        var @return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
 
-        var model = base.Visit(type);
-
-        model.Return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
-
-        model.Arguments = method.Parameters
-            .Select(p => p.Accept(FunctionArgumentVisitor.Instance))
-            .ToImmutableList();
-
-        return model;
+        return new CallbackModel(type.Name, GetAttributes(type), @return)
+        {
+            Arguments = ImmutableList.CreateRange(
+                from p in method.Parameters
+                select p.Accept(FunctionArgumentVisitor.Instance)
+            )
+        };
     }
 }

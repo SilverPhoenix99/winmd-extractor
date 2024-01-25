@@ -2,15 +2,11 @@
 
 using System.Collections.Immutable;
 
-class EnumModel(string name) : BaseObjectModel(name)
+class EnumModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Enum;
-    public string? EnumType { get; set; }
-    public IImmutableList<EnumMemberModel> Members { get; set; } = ImmutableList<EnumMemberModel>.Empty;
+    public string? EnumType { get; init; }
+    public IImmutableList<EnumMemberModel> Members { get; init; } = ImmutableList<EnumMemberModel>.Empty;
 }
 
-class EnumMemberModel(string name, object? constant)
-{
-    public string Name => name;
-    public object? Constant => constant;
-}
+record EnumMemberModel(string Name, object? Constant);

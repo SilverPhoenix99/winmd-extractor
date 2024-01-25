@@ -1,12 +1,14 @@
 ﻿namespace Winmd.Model;
 
-class StructModel(string name) : BaseObjectModel(name)
+using System.Collections.Immutable;
+
+class StructModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Struct;
     // TODO: Fields
 }
 
-class UnionModel(string name) : StructModel(name)
+class UnionModel(string name, IImmutableList<AttributeModel>? attributes) : StructModel(name, attributes)
 {
     public override ModelType Type => ModelType.Union;
 }

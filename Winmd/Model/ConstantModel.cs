@@ -1,9 +1,18 @@
 ﻿namespace Winmd.Model;
 
-class ConstantModel(string name, TypeModel constantType) : BaseObjectModel(name)
+using System.Collections.Immutable;
+
+class ConstantModel(
+    string name,
+    TypeModel constantType,
+    IImmutableList<AttributeModel>? attributes,
+    object value,
+    TypeModel valueType
+)
+    : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Constant;
     public TypeModel ConstantType => constantType;
-    public object Value { get; set; } = null!;
-    public TypeModel ValueType { get; set; } = null!;
+    public object Value => value;
+    public TypeModel ValueType => valueType;
 }

@@ -1,7 +1,6 @@
 ﻿namespace Winmd.Model.Visitors;
 
 using System.Collections.Immutable;
-using ClassExtensions;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
@@ -11,25 +10,24 @@ class EnumVisitor : BaseObjectVisitor<EnumModel>
 
     private EnumVisitor() {}
 
-    protected override EnumModel CreateModel(string name) => new(name);
-
-    public override EnumModel Visit(TypeDefinition value)
+    public override EnumModel Visit(TypeDefinition type)
     {
-        var model = base.Visit(value);
-
         // Get the primitive base type.
         // Ignore the default, to keep the output short.
-        var baseType = value.GetEnumUnderlyingType().Name;
-        if (baseType != nameof(Int32))
+        var baseType = type.GetEnumUnderlyingType().Name;
+        if (baseType == nameof(Int32))
         {
-            model.EnumType = baseType;
+            baseType = null; // It's the default
         }
 
-        model.Members = value.Fields
-            .Where(field => !field.IsSpecialName)
-            .Select(field => field.Accept(EnumMemberVisitor.Instance))
-            .ToImmutableList();
-
-        return model;
+        return new EnumModel(type.Name, GetAttributes(type))
+        {
+            EnumType = baseType,
+            Members = ImmutableList.CreateRange(
+                from f in type.Fields
+                where !f.IsSpecialName
+                select new EnumMemberModel(f.Name, f.Constant)
+            )
+        };
     }
 }

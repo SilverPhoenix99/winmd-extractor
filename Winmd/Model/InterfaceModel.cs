@@ -1,6 +1,8 @@
 ﻿namespace Winmd.Model;
 
-class InterfaceModel(string name) : BaseObjectModel(name)
+using System.Collections.Immutable;
+
+class InterfaceModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Interface;
     // TODO: Functions

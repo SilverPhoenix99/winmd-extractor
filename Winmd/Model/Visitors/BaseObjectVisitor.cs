@@ -7,12 +7,10 @@ using Mono.Cecil;
 abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
     where T : BaseObjectModel
 {
-    protected abstract T CreateModel(string name);
+    public abstract T Visit(TypeDefinition type);
 
-    public virtual T Visit(TypeDefinition type)
+    protected virtual IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
     {
-        var model = CreateModel(type.Name);
-
         var structLayout = type.Accept(StructLayoutVisitor.Instance);
 
         var attributes = Visit(type.CustomAttributes);
@@ -21,16 +19,12 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
             attributes.Insert(0, structLayout);
         }
 
-        if (!attributes.IsEmpty())
-        {
-            model.Attributes = attributes.ToImmutableList();
-        }
-
-        return model;
+        return attributes.IsEmpty() ? null : attributes.ToImmutableList();
     }
 
     private static List<AttributeModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
-        customAttributes
-            .Select(a => a.Accept(AttributeVisitor.Instance))
-            .ToList();
+    [
+        ..from a in customAttributes
+        select a.Accept(AttributeVisitor.Instance)
+    ];
 }

@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using ClassExtensions;
 using Mono.Cecil;
+using static Mono.Cecil.PInvokeAttributes;
 
 class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
 {
@@ -68,17 +69,16 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
             properties["ThrowOnUnmappableChar"] = true;
         }
 
-        return new AttributeModel(DllImport.Name)
+        return new AttributeModel(DllImport.Name, DllImport.Namespace)
         {
-            Namespace = DllImport.Namespace,
-            Arguments = ImmutableList.Create( new AttributeArgumentModel(TypeModel.StringType, info.Module.Name)),
+            Arguments = ImmutableList.Create( new AttributeArgumentModel(info.Module.Name, TypeModel.StringType)),
             Properties = properties.ToImmutableDictionary()
         };
     }
 
     private static CallingConvention? GetCallingConvention(PInvokeAttributes attributes)
     {
-        var masked = attributes & PInvokeAttributes.CallConvMask;
+        var masked = attributes & CallConvMask;
         var callingConvention = (CallingConvention) ((ushort) masked >> 8);
         return callingConvention == CallingConvention.Winapi ? null : callingConvention;
     }
@@ -86,12 +86,12 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
     [SuppressMessage("ReSharper", "SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault")]
     private static CharSet? GetCharSet(PInvokeAttributes attributes)
     {
-        return (attributes & PInvokeAttributes.CharSetMask) switch
+        return (attributes & CharSetMask) switch
         {
-            PInvokeAttributes.CharSetAnsi => null, // defaults
-            PInvokeAttributes.CharSetAuto => null,
-            PInvokeAttributes.CharSetNotSpec => null,
-            PInvokeAttributes.CharSetUnicode => CharSet.Unicode,
+            CharSetAnsi => null, // defaults
+            CharSetAuto => null,
+            CharSetNotSpec => null,
+            CharSetUnicode => CharSet.Unicode,
             _ => throw new UnreachableException()
         };
     }

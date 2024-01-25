@@ -1,7 +1,10 @@
 ﻿namespace Winmd.Model;
 
-class TypedefModel(string name) : BaseObjectModel(name)
+using System.Collections.Immutable;
+
+class TypedefModel(string name, IImmutableList<AttributeModel>? attributes, TypeModel sourceType)
+    : BaseObjectModel(name, attributes)
 {
     public override ModelType Type => ModelType.Typedef;
-    public TypeModel SourceType { get; set; } = null!;
+    public TypeModel SourceType => sourceType;
 }

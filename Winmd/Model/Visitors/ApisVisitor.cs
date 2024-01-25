@@ -15,16 +15,15 @@ class ApisVisitor : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
         var fieldModels =
             from f in type.Fields
             where f.IsPublic && f.IsStatic && !f.IsSpecialName
-            select f.Accept(ConstantVisitor.Instance);
+            select f.Accept<BaseObjectModel>(ConstantVisitor.Instance);
 
         var functionModels =
             from m in type.Methods
             where m.IsPublic && m.IsStatic && m.IsPInvokeImpl && !m.IsSpecialName
             select m.Accept(FunctionVisitor.Instance);
 
-        return fieldModels
-            .Cast<BaseObjectModel>()
-            .Concat(functionModels)
-            .ToImmutableList();
+        var models = fieldModels.Concat(functionModels);
+
+        return ImmutableList.CreateRange(models);
     }
 }

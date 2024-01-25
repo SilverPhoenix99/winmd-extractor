@@ -29,18 +29,30 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
             return null;
         }
 
-        var args = attribute.ConstructorArguments
-            .Select(a => a.Value)
-            .ToArray();
+        var args = new List<object>(
+            from a in attribute.ConstructorArguments
+            select a.Value
+        );
 
-        var guid = (Guid) Activator.CreateInstance(typeof(Guid), args)!;
+        var guid = new Guid(
+            (uint) args[0],
+            (ushort) args[1],
+            (ushort) args[2],
+            (byte) args[3],
+            (byte) args[4],
+            (byte) args[5],
+            (byte) args[6],
+            (byte) args[7],
+            (byte) args[8],
+            (byte) args[9],
+            (byte) args[10]
+        );
 
-        return new AttributeModel(Guid.Name)
+        return new AttributeModel(Guid.Name, Metadata)
         {
-            Namespace = Metadata,
             Arguments = ImmutableList.Create(new AttributeArgumentModel(
-                TypeModel.StringType,
-                guid.ToString()
+                guid.ToString(),
+                TypeModel.StringType
             ))
         };
     }
@@ -54,24 +66,21 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
         }
 
         var value = (Architecture) (int) attribute.ConstructorArguments[0].Value;
-        var architectures = FlagsEnumVisitor.Instance
-            .Visit(value)
-            .Select(arch => new AttributeArgumentModel(TypeModel.StringType, arch.ToString()))
-            .ToImmutableList();
+        var architectures =
+            from arch in FlagsEnumVisitor.Instance.Visit(value)
+            select new AttributeArgumentModel(arch.ToString(), TypeModel.StringType);
 
-        return new AttributeModel(SupportedArchitecture.Name)
+        return new AttributeModel(SupportedArchitecture.Name, Metadata)
         {
-            Namespace = Metadata,
-            Arguments = architectures
+            Arguments = architectures.ToImmutableList()
         };
     }
 
     private static AttributeModel CreateDefault(ICustomAttribute attribute)
     {
         var (name, @namespace) = attribute.AttributeType.GetQualifiedName();
-        return new AttributeModel(name)
+        return new AttributeModel(name, @namespace)
         {
-            Namespace = @namespace,
             Arguments = attribute.ConstructorArguments
                 .Select(arg => arg.Accept(AttributeArgumentVisitor.Instance))
                 .ToImmutableList(),

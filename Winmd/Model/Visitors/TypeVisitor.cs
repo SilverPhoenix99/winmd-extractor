@@ -18,11 +18,11 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
         {
             if (type.IsPointer)
             {
-                var pointer = modifiers.LastOrDefault()?.Pointer;
-                if (pointer is not null)
+                var lastModifier = modifiers.LastOrDefault();
+                if (lastModifier is not null)
                 {
                     // Increment, and replace last element
-                    modifiers[^1] = new TypeModifier(pointer + 1, null);
+                    modifiers[^1] = lastModifier with { Pointer = lastModifier.Pointer + 1 };
                 }
                 else
                 {
@@ -40,10 +40,8 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
 
         return new TypeModel(
             type.Name,
-            type.Namespace != "System" ? type.Namespace : null
-        )
-        {
-            Modifiers = modifiers.IsEmpty() ? null : modifiers.ToImmutableList()
-        };
+            type.Namespace != "System" ? type.Namespace : null,
+            modifiers.IsEmpty() ? null : modifiers.ToImmutableList()
+        );
     }
 }
