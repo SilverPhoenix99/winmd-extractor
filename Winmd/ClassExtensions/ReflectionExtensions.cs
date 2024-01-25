@@ -4,10 +4,10 @@ using Mono.Cecil;
 
 static class ReflectionExtensions
 {
-    public static (string Name, string? Namespace) GetQualifiedName(this Type type)
+    public static (string Name, string? Namespace) GetQualifiedName(this Type type, bool stripAttributes = true)
     {
         var name = type.Name;
-        if (type.BaseType == typeof(Attribute))
+        if (stripAttributes && type.BaseType == typeof(Attribute))
         {
             name = name.StripEnd("Attribute");
         }

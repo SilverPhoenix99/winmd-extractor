@@ -21,9 +21,9 @@ var winmdAssemblies = Directory.GetFiles(executableDirectory, "*.winmd");
 var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 
 var allTypes = assembly.Modules
-    .SelectMany(m => m.Types)
-    .Where(t => t.IsPublic)
-    .Where(t => t.BaseType?.FullName != "System.Attribute") // No need to generate attributes - their usage is enough
+    .SelectMany(m => m.GetTypes())
+    .Where(t => t.IsPublic) // Also automatically excludes nested types
+    .Where(t => t.Namespace != "Windows.Win32.Foundation.Metadata") // Metadata is not directly needed to generate output
     .GroupBy(t => t.Namespace!);
 
 var jsonOptions = new JsonSerializerOptions
