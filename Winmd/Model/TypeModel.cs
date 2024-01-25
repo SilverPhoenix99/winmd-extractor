@@ -9,7 +9,6 @@ class TypeModel(string name, string? @namespace = null)
     public string Name => name;
     public string? Namespace => @namespace;
     public IImmutableList<TypeModifier>? Modifiers { get; set; }
-    public IImmutableList<AttributeModel>? Attributes { get; set; }
 
     #region Constants
 
