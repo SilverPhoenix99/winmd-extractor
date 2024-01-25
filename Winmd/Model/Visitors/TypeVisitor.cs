@@ -16,17 +16,17 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
 
         for (; type.IsPointer || type.IsArray; type = ((TypeSpecification) type).ElementType)
         {
-            var lastModifier = modifiers.LastOrDefault();
-
             if (type.IsPointer)
             {
-                if (lastModifier?.Pointer is not null)
+                var pointer = modifiers.LastOrDefault()?.Pointer;
+                if (pointer is not null)
                 {
-                    lastModifier.Pointer++;
+                    // Increment, and replace last element
+                    modifiers[^1] = new TypeModifier(pointer + 1, null);
                 }
                 else
                 {
-                    modifiers.Add(new TypeModifier { Pointer = 1 });
+                    modifiers.Add(new TypeModifier(1, null));
                 }
             }
             else {

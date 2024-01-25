@@ -18,8 +18,4 @@ record TypeModel(string Name, string? Namespace = null, IImmutableList<TypeModif
     #endregion
 }
 
-class TypeModifier
-{
-    public int? Pointer { get; set; }
-    public int? Array { get; set; }
-}
+record TypeModifier(int? Pointer, int? Array);
