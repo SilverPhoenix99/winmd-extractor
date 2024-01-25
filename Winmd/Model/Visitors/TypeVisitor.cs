@@ -29,10 +29,12 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
                     modifiers.Add(new TypeModifier(1, null));
                 }
             }
-            else {
-                // IsArray
-                // var dimensions = ((ArrayType) type).Dimensions;
-                throw new NotImplementedException("TODO: Array Types");
+            else { // IsArray
+                modifiers.AddRange(
+                    from d in ((ArrayType) type).Dimensions
+                    let len = d.Length() ?? -1
+                    select new TypeModifier(null, len)
+                );
             }
         }
 

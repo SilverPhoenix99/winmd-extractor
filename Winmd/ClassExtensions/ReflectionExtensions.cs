@@ -18,6 +18,16 @@ static class ReflectionExtensions
         );
     }
 
+    public static int? Length(this ArrayDimension dimension)
+    {
+        if (!dimension.IsSized)
+        {
+            return null;
+        }
+
+        return dimension.UpperBound - dimension.LowerBound + 1;
+    }
+
     public static TO Accept<TO>(this CustomAttribute element, IVisitor<CustomAttribute, TO> visitor) =>
         visitor.Visit(element);
 
