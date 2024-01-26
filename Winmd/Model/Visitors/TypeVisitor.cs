@@ -13,10 +13,9 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
     public TypeModel Visit(TypeReference type)
     {
         var (elementType, modifiers) = GetModifiers(type);
-        var @namespace = elementType.GetNamespace();
         return new TypeModel(
             elementType.Name,
-            @namespace != "System" ? @namespace : null,
+            elementType.GetNamespace(),
             elementType.GetNesting()?.Select(t => t.Name).ToImmutableList(),
             modifiers
         );

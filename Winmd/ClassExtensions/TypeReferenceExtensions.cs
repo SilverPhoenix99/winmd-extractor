@@ -21,15 +21,13 @@ static class TypeReferenceExtensions
             name = name.StripEnd("Attribute");
         }
 
-        return (
-            name,
-            type.Namespace != "System" ? type.Namespace : null
-        );
+        return (name, type.GetNamespace());
     }
 
     public static string? GetNamespace(this TypeReference type)
     {
-        return type.IsNested ? type.GetNesting()![0].Namespace : type.Namespace;
+        var @namespace = type.IsNested ? type.GetNesting()![0].Namespace : type.Namespace;
+        return @namespace != "System" ? @namespace : null;
     }
 
     public static IImmutableList<TypeReference>? GetNesting(this TypeReference type)

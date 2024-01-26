@@ -15,7 +15,7 @@ static class TypeDefinitionExtensions
         return type.CustomAttributes
             .Any(a =>
                 a.AttributeType.Name == "NativeTypedefAttribute"
-                && a.AttributeType.Namespace.StartsWith("Windows.Win32")
+                && a.AttributeType.GetNamespace()!.StartsWith("Windows.Win32")
             );
     }
 }
