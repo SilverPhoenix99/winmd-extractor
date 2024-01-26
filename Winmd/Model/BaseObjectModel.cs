@@ -6,6 +6,7 @@ abstract class BaseObjectModel(string name, IImmutableList<AttributeModel>? attr
 {
     public abstract ModelType Type { get; }
     public string Name => name;
+    public IImmutableList<string>? Nesting { get; init; }
     public IImmutableList<AttributeModel>? Attributes => attributes;
 }
 
