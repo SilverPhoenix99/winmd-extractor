@@ -20,11 +20,12 @@ var winmdAssemblies = Directory.GetFiles(executableDirectory, "*.winmd");
 
 var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 
-var allTypes = assembly.Modules
-    .SelectMany(m => m.GetTypes())
-    .Where(t => t.IsPublic) // Also automatically excludes nested types
-    .Where(t => t.Namespace != "Windows.Win32.Foundation.Metadata") // Metadata is not directly needed to generate output
-    .GroupBy(t => t.Namespace!);
+var allTypes =
+    from m in assembly.Modules
+    from t in m.GetTypes()
+    where t.IsPublic
+    where t.Namespace != "Windows.Win32.Foundation.Metadata" // Metadata is not directly needed to generate output
+    group t by t.Namespace!;
 
 var jsonOptions = new JsonSerializerOptions
 {
@@ -42,9 +43,11 @@ jsonOptions.MakeReadOnly();
 
 foreach (var groupedTypes in allTypes)
 {
-    var types = groupedTypes
-        .SelectMany(t => t.Accept(ModelGenerator.Instance))
-        .ToImmutableList();
+    var types = ImmutableList.CreateRange(
+        from type in groupedTypes
+        from model in type.Accept(ModelGenerator.Instance)
+        select model
+    );
 
     if (types.IsEmpty)
     {
