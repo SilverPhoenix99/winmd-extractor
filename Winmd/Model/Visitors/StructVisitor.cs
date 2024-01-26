@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using ClassExtensions;
 using Mono.Cecil;
 
@@ -23,7 +24,7 @@ class StructVisitor : BaseObjectVisitor<StructModel>
     protected static IImmutableList<string>? GetNesting(TypeDefinition type) =>
         type.GetNesting()?.Select(t => t.Name).ToImmutableList();
 
-    protected virtual ImmutableList<FieldModel> GetFields(TypeDefinition type) =>
+    protected static ImmutableList<FieldModel> GetFields(TypeDefinition type) =>
         ImmutableList.CreateRange(
             from field in type.Fields
             where field.IsPublic && !field.IsStatic && !field.IsSpecialName
@@ -61,13 +62,15 @@ class UnionVisitor : StructVisitor
 
     protected override IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
     {
-        // TODO: Remove attribute StructLayout(LayoutKind.Explicit) [default]
-        return base.GetAttributes(type);
+        var attributes = base.GetAttributes(type);
+        return attributes == null ? null
+            : ImmutableList.CreateRange(
+                from a in base.GetAttributes(type)
+                where !IsStructLayout(a)
+                select a
+            );
     }
 
-    protected override ImmutableList<FieldModel> GetFields(TypeDefinition type)
-    {
-        // TODO: Remove attribute FieldOffset(0) from fields
-        return base.GetFields(type);
-    }
+    private static bool IsStructLayout(AttributeModel attribute) =>
+        attribute is { Name: "StructLayout", Namespace: "System.Runtime.InteropServices" };
 }
