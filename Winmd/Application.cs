@@ -23,9 +23,9 @@ var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 var allTypes =
     from m in assembly.Modules
     from t in m.GetTypes()
-    where t.IsPublic
-    where t.Namespace != "Windows.Win32.Foundation.Metadata" // Metadata is not directly needed to generate output
-    group t by t.Namespace!;
+    where t.IsPublic || t.IsNestedPublic
+    where t.GetNamespace() != "Windows.Win32.Foundation.Metadata" // Metadata is not directly needed to generate output
+    group t by t.GetNamespace()!;
 
 var jsonOptions = new JsonSerializerOptions
 {

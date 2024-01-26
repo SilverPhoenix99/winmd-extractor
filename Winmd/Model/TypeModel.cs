@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using ClassExtensions;
 
-record TypeModel(string Name, string? Namespace = null, IImmutableList<TypeModifier>? Modifiers = null)
+record TypeModel(string Name, string? Namespace = null, IImmutableList<string>? Nesting = null, IImmutableList<TypeModifier>? Modifiers = null)
 {
     #region Constants
 

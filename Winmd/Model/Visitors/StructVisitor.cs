@@ -13,15 +13,17 @@ class StructVisitor : BaseObjectVisitor<StructModel>
 
     public override StructModel Visit(TypeDefinition type)
     {
-        // TODO: Nested classes & anonymous structs/unions
-
         return new StructModel(type.Name, GetAttributes(type))
         {
+            Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
     }
 
-    protected static ImmutableList<FieldModel> GetFields(TypeDefinition type) =>
+    protected static IImmutableList<string>? GetNesting(TypeDefinition type) =>
+        type.GetNesting()?.Select(t => t.Name).ToImmutableList();
+
+    protected virtual ImmutableList<FieldModel> GetFields(TypeDefinition type) =>
         ImmutableList.CreateRange(
             from field in type.Fields
             where field.IsPublic && !field.IsStatic && !field.IsSpecialName
@@ -50,14 +52,22 @@ class UnionVisitor : StructVisitor
 
     private UnionVisitor() {}
 
-    public override UnionModel Visit(TypeDefinition type)
-    {
-        // TODO: Remove attribute StructLayout(LayoutKind.Explicit) [default]
-        // TODO: Remove attribute FieldOffset(0) from fields
-
-        return new UnionModel(type.Name, GetAttributes(type))
+    public override UnionModel Visit(TypeDefinition type) =>
+        new(type.Name, GetAttributes(type))
         {
+            Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
+
+    protected override IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
+    {
+        // TODO: Remove attribute StructLayout(LayoutKind.Explicit) [default]
+        return base.GetAttributes(type);
+    }
+
+    protected override ImmutableList<FieldModel> GetFields(TypeDefinition type)
+    {
+        // TODO: Remove attribute FieldOffset(0) from fields
+        return base.GetFields(type);
     }
 }

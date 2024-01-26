@@ -1,5 +1,6 @@
 ﻿namespace Winmd.ClassExtensions;
 
+using System.Collections.Immutable;
 using Mono.Cecil;
 
 static class TypeReferenceExtensions
@@ -24,5 +25,24 @@ static class TypeReferenceExtensions
             name,
             type.Namespace != "System" ? type.Namespace : null
         );
+    }
+
+    public static string? GetNamespace(this TypeReference type)
+    {
+        return type.IsNested ? type.GetNesting()![0].Namespace : type.Namespace;
+    }
+
+    public static IImmutableList<TypeReference>? GetNesting(this TypeReference type)
+    {
+        var nesting = GetNestingEnumerable(type).Reverse().ToImmutableList();
+        return nesting.IsEmpty ? null : nesting;
+    }
+
+    private static IEnumerable<TypeReference> GetNestingEnumerable(TypeReference type)
+    {
+        for (; type.IsNested ; type = type.DeclaringType)
+        {
+            yield return type.DeclaringType;
+        }
     }
 }

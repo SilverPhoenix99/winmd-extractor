@@ -12,6 +12,18 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
 
     public TypeModel Visit(TypeReference type)
     {
+        var (elementType, modifiers) = GetModifiers(type);
+        var @namespace = elementType.GetNamespace();
+        return new TypeModel(
+            elementType.Name,
+            @namespace != "System" ? @namespace : null,
+            elementType.GetNesting()?.Select(t => t.Name).ToImmutableList(),
+            modifiers
+        );
+    }
+
+    private static (TypeReference, ImmutableList<TypeModifier>?) GetModifiers(TypeReference type)
+    {
         var modifiers = new List<TypeModifier>();
 
         for (; type.IsPointer || type.IsArray; type = ((TypeSpecification) type).ElementType)
@@ -39,11 +51,10 @@ class TypeVisitor : IVisitor<TypeReference, TypeModel>
         }
 
         modifiers.Reverse();
-
-        return new TypeModel(
-            type.Name,
-            type.Namespace != "System" ? type.Namespace : null,
+        return (
+            type,
             modifiers.IsEmpty() ? null : modifiers.ToImmutableList()
         );
     }
+
 }
