@@ -29,7 +29,12 @@ var allTypes =
 
 var jsonOptions = new JsonSerializerOptions
 {
-    WriteIndented = true,
+    WriteIndented =
+#if DEBUG
+        true,
+#else
+        false,
+#endif
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

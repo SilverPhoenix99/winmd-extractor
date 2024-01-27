@@ -12,14 +12,12 @@ class StructVisitor : BaseObjectVisitor<StructModel>
 
     protected StructVisitor() {}
 
-    public override StructModel Visit(TypeDefinition type)
-    {
-        return new StructModel(type.Name, GetAttributes(type))
+    public override StructModel Visit(TypeDefinition type) =>
+        new(type.Name, GetAttributes(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
-    }
 
     protected static IImmutableList<string>? GetNesting(TypeDefinition type) =>
         type.GetNesting()?.Select(t => t.Name).ToImmutableList();
