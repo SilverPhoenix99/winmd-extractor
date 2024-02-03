@@ -4,14 +4,14 @@ using System.Collections.Immutable;
 
 abstract class BaseObjectModel(string name, IImmutableList<AttributeModel>? attributes)
 {
-    public abstract ModelType Type { get; }
+    public abstract ModelKind Kind { get; }
     public string Name => name;
     public IImmutableList<string>? Nesting { get; init; }
     public IImmutableList<AttributeModel>? Attributes => attributes;
 }
 
-class ObjectModel(ModelType type, string name, IImmutableList<AttributeModel>? attributes)
+class ObjectModel(ModelKind kind, string name, IImmutableList<AttributeModel>? attributes)
     : BaseObjectModel(name, attributes)
 {
-    public override ModelType Type => type;
+    public override ModelKind Kind => kind;
 }

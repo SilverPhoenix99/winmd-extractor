@@ -11,7 +11,7 @@ class ConstantModel(
 )
     : BaseObjectModel(name, attributes)
 {
-    public override ModelType Type => ModelType.Constant;
+    public override ModelKind Kind => ModelKind.Constant;
     public TypeModel ConstantType => constantType;
     public object Value => value;
     public TypeModel ValueType => valueType;

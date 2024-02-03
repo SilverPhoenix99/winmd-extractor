@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 class FunctionModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
     : BaseObjectModel(name, attributes)
 {
-    public override ModelType Type => ModelType.Function;
+    public override ModelKind Kind => ModelKind.Function;
     public ReturnModel Return => @return;
     public IImmutableList<FunctionArgumentModel> Arguments { get; init; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
@@ -13,7 +13,7 @@ class FunctionModel(string name, IImmutableList<AttributeModel>? attributes, Ret
 class CallbackModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
     : FunctionModel(name, attributes, @return)
 {
-    public override ModelType Type => ModelType.Callback;
+    public override ModelKind Kind => ModelKind.Callback;
 }
 
 // Preserved as class, due to field's order

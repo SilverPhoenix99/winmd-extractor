@@ -4,6 +4,6 @@ using System.Collections.Immutable;
 
 class InterfaceModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
 {
-    public override ModelType Type => ModelType.Interface;
+    public override ModelKind Kind => ModelKind.Interface;
     // TODO: Functions
 }

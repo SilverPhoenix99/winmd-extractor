@@ -1,6 +1,6 @@
 ﻿namespace Winmd.Model;
 
-enum ModelType
+enum ModelKind
 {
     Apis,      // class Apis - the list of available constants and functions
     // Attribute - not used

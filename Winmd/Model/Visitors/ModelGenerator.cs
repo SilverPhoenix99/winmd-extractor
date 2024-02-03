@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using ClassExtensions;
 using Mono.Cecil;
-using static ModelType;
+using static ModelKind;
 
 class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 {
@@ -29,17 +29,17 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
         };
     }
 
-    private static ModelType GetModelType(TypeDefinition type) =>
+    private static ModelKind GetModelType(TypeDefinition type) =>
         type.IsInterface ? Interface
         : type.IsEnum ? Enum
         : type.IsDelegate() ? Callback
         : type.IsValueType ? GetStructType(type)
         : GetClassType(type);
 
-    private static ModelType GetStructType(TypeDefinition type) =>
+    private static ModelKind GetStructType(TypeDefinition type) =>
         type.IsTypedef() ? Typedef
         : type.IsExplicitLayout ? Union
         : Struct;
 
-    private static ModelType GetClassType(IMemberDefinition type) => type.Name == "Apis" ? Apis : Object;
+    private static ModelKind GetClassType(IMemberDefinition type) => type.Name == "Apis" ? Apis : Object;
 }

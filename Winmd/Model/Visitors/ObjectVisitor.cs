@@ -2,7 +2,7 @@
 
 using Mono.Cecil;
 
-class ObjectVisitor(ModelType modelType) : BaseObjectVisitor<ObjectModel>
+class ObjectVisitor(ModelKind kind) : BaseObjectVisitor<ObjectModel>
 {
-    public override ObjectModel Visit(TypeDefinition type) => new(modelType, type.Name, GetAttributes(type));
+    public override ObjectModel Visit(TypeDefinition type) => new(kind, type.Name, GetAttributes(type));
 }
