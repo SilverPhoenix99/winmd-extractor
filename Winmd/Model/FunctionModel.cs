@@ -16,12 +16,6 @@ class CallbackModel(string name, IImmutableList<AttributeModel>? attributes, Ret
     public override ModelKind Kind => ModelKind.Callback;
 }
 
-// Preserved as class, due to field's order
-class FunctionArgumentModel(string name, TypeModel type, IImmutableList<AttributeModel>? attributes)
-{
-    public string Name => name;
-    public IImmutableList<AttributeModel>? Attributes = attributes;
-    public TypeModel Type => type;
-}
+record FunctionArgumentModel(string Name, TypeModel Type, IImmutableList<AttributeModel>? Attributes = null);
 
 record ReturnModel(TypeModel Type, IImmutableList<AttributeModel>? Attributes = null);
