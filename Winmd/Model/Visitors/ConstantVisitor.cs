@@ -25,16 +25,16 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
-            var guidAttribute = attributes.Value.FirstOrDefault(a => a.Name == TypeModel.GuidType.Name);
+            var guidAnnotation = annotations.Value.FirstOrDefault(a => a.Name == TypeModel.GuidType.Name);
 
-            if (guidAttribute is null)
+            if (guidAnnotation is null)
             {
                 return null;
             }
 
             var attrs = ImmutableList.CreateRange(
-                from a in attributes.Value
-                where a != guidAttribute
+                from a in annotations.Value
+                where a != guidAnnotation
                 select a
             );
 
@@ -42,7 +42,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 field.Name,
                 TypeModel.GuidType,
                 attrs.IsEmpty ? null : attrs,
-                guidAttribute.Arguments[0].Value!,
+                guidAnnotation.Arguments[0].Value!,
                 TypeModel.StringType
             );
         }
@@ -55,19 +55,19 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
-            var constAttribute = attributes.Value
+            var constAnnotation = annotations.Value
                 .FirstOrDefault(a =>
                     a is { Name: "Constant", Namespace: "Windows.Win32.Foundation.Metadata" }
                 );
 
-            if (constAttribute is null)
+            if (constAnnotation is null)
             {
                 return null;
             }
 
             var attrs = ImmutableList.CreateRange(
-                from a in attributes.Value
-                where a != constAttribute
+                from a in annotations.Value
+                where a != constAnnotation
                 select a
             );
 
@@ -75,7 +75,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 field.Name,
                 FieldType,
                 attrs.IsEmpty ? null : attrs,
-                constAttribute.Arguments[0].Value!,
+                constAnnotation.Arguments[0].Value!,
                 TypeModel.StringType
             );
         }
@@ -93,16 +93,16 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             return new ConstantModel(
                 field.Name,
                 FieldType,
-                attributes.Value.IsEmpty ? null : attributes.Value,
+                annotations.Value.IsEmpty ? null : annotations.Value,
                 value,
                 new TypeModel(valueType.Name, valueType.Namespace)
             );
         }
 
-        private readonly Lazy<ImmutableList<AttributeModel>> attributes = new(() =>
+        private readonly Lazy<ImmutableList<AnnotationModel>> annotations = new(() =>
             ImmutableList.CreateRange(
                 from a in field.CustomAttributes
-                select a.Accept(AttributeVisitor.Instance)
+                select a.Accept(AnnotationVisitor.Instance)
             )
         );
 

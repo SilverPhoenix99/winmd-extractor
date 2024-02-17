@@ -2,20 +2,20 @@
 
 using System.Collections.Immutable;
 
-class FunctionModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
-    : BaseObjectModel(name, attributes)
+class FunctionModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
+    : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Function;
     public ReturnModel Return => @return;
     public IImmutableList<FunctionArgumentModel> Arguments { get; init; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
 
-class CallbackModel(string name, IImmutableList<AttributeModel>? attributes, ReturnModel @return)
-    : FunctionModel(name, attributes, @return)
+class CallbackModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
+    : FunctionModel(name, annotations, @return)
 {
     public override ModelKind Kind => ModelKind.Callback;
 }
 
-record FunctionArgumentModel(string Name, TypeModel Type, IImmutableList<AttributeModel>? Attributes = null);
+record FunctionArgumentModel(string Name, TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);
 
-record ReturnModel(TypeModel Type, IImmutableList<AttributeModel>? Attributes = null);
+record ReturnModel(TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);

@@ -9,22 +9,22 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
 {
     public abstract T Visit(TypeDefinition type);
 
-    protected virtual IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
+    protected virtual IImmutableList<AnnotationModel>? GetAnnotations(TypeDefinition type)
     {
         var structLayout = type.Accept(StructLayoutVisitor.Instance);
 
-        var attributes = Visit(type.CustomAttributes);
+        var annotations = Visit(type.CustomAttributes);
         if (structLayout is not null)
         {
-            attributes.Insert(0, structLayout);
+            annotations.Insert(0, structLayout);
         }
 
-        return attributes.IsEmpty() ? null : attributes.ToImmutableList();
+        return annotations.IsEmpty() ? null : annotations.ToImmutableList();
     }
 
-    private static List<AttributeModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
+    private static List<AnnotationModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
     [
         ..from a in customAttributes
-        select a.Accept(AttributeVisitor.Instance)
+        select a.Accept(AnnotationVisitor.Instance)
     ];
 }

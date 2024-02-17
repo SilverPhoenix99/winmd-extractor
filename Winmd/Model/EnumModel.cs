@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-class EnumModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
+class EnumModel(string name, IImmutableList<AnnotationModel>? annotations) : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Enum;
     public string? EnumType { get; init; }

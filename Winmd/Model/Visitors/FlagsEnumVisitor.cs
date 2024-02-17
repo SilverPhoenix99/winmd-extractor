@@ -21,14 +21,14 @@ class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
             throw new NotSupportedException($"Type {type} isn't a Flags enum.");
         }
 
-        var attributeSet = Flags.ComputeIfMissing(type, ComputeFlags);
+        var members = Flags.ComputeIfMissing(type, ComputeFlags);
 
         var enumValue = (Enum) value;
 
         return ImmutableSortedSet.CreateRange(
-            from a in attributeSet
-            where enumValue.HasFlag(a)
-            select a
+            from m in members
+            where enumValue.HasFlag(m)
+            select m
         );
     }
 

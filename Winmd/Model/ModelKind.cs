@@ -3,7 +3,7 @@
 enum ModelKind
 {
     Apis,      // class Apis - the list of available constants and functions
-    // Attribute - not used
+    // Annotation - not used
     Callback,
     Constant,  // defines or consts
     Enum,

@@ -14,28 +14,28 @@ class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentMo
         new(
             parameter.Name,
             parameter.ParameterType.Accept(TypeVisitor.Instance),
-            GetAttributes(parameter)
+            GetAnnotations(parameter)
         );
 
-    private static ImmutableList<AttributeModel>? GetAttributes(ParameterDefinition parameter)
+    private static ImmutableList<AnnotationModel>? GetAnnotations(ParameterDefinition parameter)
     {
-        var attributes = new List<AttributeModel>(
+        var annotations = new List<AnnotationModel>(
             from a in parameter.CustomAttributes
-            select a.Accept(AttributeVisitor.Instance)
+            select a.Accept(AnnotationVisitor.Instance)
         );
 
         if (!IsDefault(parameter.Attributes))
         {
-            attributes.Insert(0, new AttributeModel("ParameterFlags")
+            annotations.Insert(0, new AnnotationModel("ParameterFlags")
             {
                 Arguments = ImmutableList.CreateRange(
                     from f in parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
-                    select new AttributeArgumentModel(f.ToString(), TypeModel.StringType)
+                    select new AnnotationArgumentModel(f.ToString(), TypeModel.StringType)
                 )
             });
         }
 
-        return attributes.IsEmpty() ? null : attributes.ToImmutableList();
+        return annotations.IsEmpty() ? null : annotations.ToImmutableList();
     }
 
     private static bool IsDefault(ParameterAttributes attributes) =>

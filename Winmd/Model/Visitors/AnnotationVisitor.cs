@@ -6,22 +6,22 @@ using ClassExtensions;
 using Mono.Cecil;
 using Architecture = Architecture;
 
-class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
+class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
 {
-    public static readonly AttributeVisitor Instance = new();
+    public static readonly AnnotationVisitor Instance = new();
 
     private const string Metadata = "Windows.Win32.Foundation.Metadata";
     private static readonly (string Name, string Namespace) SupportedArchitecture = ("SupportedArchitecture", Metadata);
     private static readonly (string Name, string Namespace) Guid = typeof(GuidAttribute).GetQualifiedName()!;
 
-    private AttributeVisitor() {}
+    private AnnotationVisitor() {}
 
-    public AttributeModel Visit(CustomAttribute attribute) =>
+    public AnnotationModel Visit(CustomAttribute attribute) =>
         CreateGuid(attribute)
         ?? CreateArchitecture(attribute)
         ?? CreateDefault(attribute);
 
-    private static AttributeModel? CreateGuid(ICustomAttribute attribute)
+    private static AnnotationModel? CreateGuid(ICustomAttribute attribute)
     {
         var qualifiedName = attribute.AttributeType.GetQualifiedName();
         if (!qualifiedName.Equals((Guid.Name, Metadata)))
@@ -48,16 +48,16 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
             (byte) args[10]
         );
 
-        return new AttributeModel(Guid.Name, Metadata)
+        return new AnnotationModel(Guid.Name, Metadata)
         {
-            Arguments = ImmutableList.Create(new AttributeArgumentModel(
+            Arguments = ImmutableList.Create(new AnnotationArgumentModel(
                 guid.ToString(),
                 TypeModel.StringType
             ))
         };
     }
 
-    private static AttributeModel? CreateArchitecture(ICustomAttribute attribute)
+    private static AnnotationModel? CreateArchitecture(ICustomAttribute attribute)
     {
         var qualifiedName = attribute.AttributeType.GetQualifiedName();
         if (!qualifiedName.Equals(SupportedArchitecture))
@@ -68,21 +68,21 @@ class AttributeVisitor : IVisitor<CustomAttribute, AttributeModel>
         var value = (Architecture) (int) attribute.ConstructorArguments[0].Value;
         var architectures =
             from arch in FlagsEnumVisitor.Instance.Visit(value)
-            select new AttributeArgumentModel(arch.ToString(), TypeModel.StringType);
+            select new AnnotationArgumentModel(arch.ToString(), TypeModel.StringType);
 
-        return new AttributeModel(SupportedArchitecture.Name, Metadata)
+        return new AnnotationModel(SupportedArchitecture.Name, Metadata)
         {
             Arguments = architectures.ToImmutableList()
         };
     }
 
-    private static AttributeModel CreateDefault(ICustomAttribute attribute)
+    private static AnnotationModel CreateDefault(ICustomAttribute attribute)
     {
         var (name, @namespace) = attribute.AttributeType.GetQualifiedName();
-        return new AttributeModel(name, @namespace)
+        return new AnnotationModel(name, @namespace)
         {
             Arguments = attribute.ConstructorArguments
-                .Select(arg => arg.Accept(AttributeArgumentVisitor.Instance))
+                .Select(arg => arg.Accept(AnnotationArgumentVisitor.Instance))
                 .ToImmutableList(),
             Properties = attribute.Fields.Concat(attribute.Properties)
                 .ToImmutableDictionary(

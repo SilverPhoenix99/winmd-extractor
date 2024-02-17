@@ -20,7 +20,7 @@ class EnumVisitor : BaseObjectVisitor<EnumModel>
             baseType = null; // It's the default
         }
 
-        return new EnumModel(type.Name, GetAttributes(type))
+        return new EnumModel(type.Name, GetAnnotations(type))
         {
             EnumType = baseType,
             Members = ImmutableList.CreateRange(

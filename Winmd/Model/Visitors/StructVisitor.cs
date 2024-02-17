@@ -13,7 +13,7 @@ class StructVisitor : BaseObjectVisitor<StructModel>
     protected StructVisitor() {}
 
     public override StructModel Visit(TypeDefinition type) =>
-        new(type.Name, GetAttributes(type))
+        new(type.Name, GetAnnotations(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
@@ -29,19 +29,19 @@ class StructVisitor : BaseObjectVisitor<StructModel>
             select new FieldModel(
                 field.Name,
                 field.FieldType.Accept(TypeVisitor.Instance),
-                GetAttributes(field)
+                GetAnnotations(field)
             )
         );
 
     [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-    private static ImmutableList<AttributeModel>? GetAttributes(FieldDefinition field)
+    private static ImmutableList<AnnotationModel>? GetAnnotations(FieldDefinition field)
     {
-        var attributes = ImmutableList.CreateRange(
+        var annotations = ImmutableList.CreateRange(
             from a in field.CustomAttributes
-            select a.Accept(AttributeVisitor.Instance)
+            select a.Accept(AnnotationVisitor.Instance)
         );
 
-        return attributes.IsEmpty ? null : attributes;
+        return annotations.IsEmpty ? null : annotations;
     }
 }
 
@@ -52,23 +52,23 @@ class UnionVisitor : StructVisitor
     private UnionVisitor() {}
 
     public override UnionModel Visit(TypeDefinition type) =>
-        new(type.Name, GetAttributes(type))
+        new(type.Name, GetAnnotations(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
 
-    protected override IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
+    protected override IImmutableList<AnnotationModel>? GetAnnotations(TypeDefinition type)
     {
-        var attributes = base.GetAttributes(type);
-        return attributes == null ? null
+        var annotations = base.GetAnnotations(type);
+        return annotations == null ? null
             : ImmutableList.CreateRange(
-                from a in base.GetAttributes(type)
+                from a in base.GetAnnotations(type)
                 where !IsStructLayout(a)
                 select a
             );
     }
 
-    private static bool IsStructLayout(AttributeModel attribute) =>
-        attribute is { Name: "StructLayout", Namespace: "System.Runtime.InteropServices" };
+    private static bool IsStructLayout(AnnotationModel annotation) =>
+        annotation is { Name: "StructLayout", Namespace: "System.Runtime.InteropServices" };
 }

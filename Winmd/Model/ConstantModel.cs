@@ -5,11 +5,11 @@ using System.Collections.Immutable;
 class ConstantModel(
     string name,
     TypeModel constantType,
-    IImmutableList<AttributeModel>? attributes,
+    IImmutableList<AnnotationModel>? annotations,
     object value,
     TypeModel valueType
 )
-    : BaseObjectModel(name, attributes)
+    : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Constant;
     public TypeModel ConstantType => constantType;

@@ -18,25 +18,25 @@ class TypedefVisitor : BaseObjectVisitor<TypedefModel>
 
         return new TypedefModel(
             type.Name,
-            GetAttributes(type),
+            GetAnnotations(type),
             fieldType.Accept(TypeVisitor.Instance)
         );
     }
 
-    protected override IImmutableList<AttributeModel>? GetAttributes(TypeDefinition type)
+    protected override IImmutableList<AnnotationModel>? GetAnnotations(TypeDefinition type)
     {
-        var attributes = base.GetAttributes(type);
-        if (attributes is null)
+        var annotations = base.GetAnnotations(type);
+        if (annotations is null)
         {
             return null;
         }
 
-        attributes = ImmutableList.CreateRange(
-            from a in attributes
+        annotations = ImmutableList.CreateRange(
+            from a in annotations
             where a is not { Name: "NativeTypedef", Namespace: "Windows.Win32.Foundation.Metadata" }
             select a
         );
 
-        return attributes.IsEmpty() ? null : attributes;
+        return annotations.IsEmpty() ? null : annotations;
     }
 }

@@ -3,16 +3,16 @@
 using ClassExtensions;
 using Mono.Cecil;
 
-class AttributeArgumentVisitor : IVisitor<CustomAttributeArgument, AttributeArgumentModel>
+class AnnotationArgumentVisitor : IVisitor<CustomAttributeArgument, AnnotationArgumentModel>
 {
-    public static readonly AttributeArgumentVisitor Instance = new();
+    public static readonly AnnotationArgumentVisitor Instance = new();
 
-    private AttributeArgumentVisitor() {}
+    private AnnotationArgumentVisitor() {}
 
-    public AttributeArgumentModel Visit(CustomAttributeArgument argument)
+    public AnnotationArgumentModel Visit(CustomAttributeArgument argument)
     {
         var parseValue = ParseValue(argument.Type.Resolve(), argument.Value);
-        return new AttributeArgumentModel(parseValue, argument.Type.Accept(TypeVisitor.Instance));
+        return new AnnotationArgumentModel(parseValue, argument.Type.Accept(TypeVisitor.Instance));
     }
 
     private static object? ParseValue(TypeDefinition argumentType, object? value) =>

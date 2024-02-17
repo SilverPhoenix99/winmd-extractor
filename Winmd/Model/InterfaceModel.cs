@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-class InterfaceModel(string name, IImmutableList<AttributeModel>? attributes) : BaseObjectModel(name, attributes)
+class InterfaceModel(string name, IImmutableList<AnnotationModel>? annotations) : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Interface;
     // TODO: Functions

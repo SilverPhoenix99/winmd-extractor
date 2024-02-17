@@ -8,7 +8,7 @@ using ClassExtensions;
 using Mono.Cecil;
 using static Mono.Cecil.PInvokeAttributes;
 
-class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
+class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
 {
     public static readonly PInvokeInfoVisitor Instance = new();
 
@@ -16,7 +16,7 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
 
     private PInvokeInfoVisitor() {}
 
-    public AttributeModel? Visit(MethodDefinition method)
+    public AnnotationModel? Visit(MethodDefinition method)
     {
         if (!method.IsPInvokeImpl)
         {
@@ -69,9 +69,9 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AttributeModel?>
             properties["ThrowOnUnmappableChar"] = true;
         }
 
-        return new AttributeModel(DllImport.Name, DllImport.Namespace)
+        return new AnnotationModel(DllImport.Name, DllImport.Namespace)
         {
-            Arguments = ImmutableList.Create( new AttributeArgumentModel(info.Module.Name, TypeModel.StringType)),
+            Arguments = ImmutableList.Create( new AnnotationArgumentModel(info.Module.Name, TypeModel.StringType)),
             Properties = properties.ToImmutableDictionary()
         };
     }

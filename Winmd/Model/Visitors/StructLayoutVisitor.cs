@@ -8,7 +8,7 @@ using ClassExtensions;
 using Mono.Cecil;
 using static Mono.Cecil.TypeAttributes;
 
-class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
+class StructLayoutVisitor : IVisitor<TypeDefinition, AnnotationModel?>
 {
     public static readonly StructLayoutVisitor Instance = new();
 
@@ -18,7 +18,7 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
     private StructLayoutVisitor() {}
 
     [SuppressMessage("ReSharper", "SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault")]
-    public AttributeModel? Visit(TypeDefinition type)
+    public AnnotationModel? Visit(TypeDefinition type)
     {
         var layout = (type.Attributes & LayoutMask) switch
         {
@@ -62,9 +62,9 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AttributeModel?>
             properties["Size"] = type.ClassSize;
         }
 
-        return new AttributeModel(StructLayoutName.Name, StructLayoutName.Namespace)
+        return new AnnotationModel(StructLayoutName.Name, StructLayoutName.Namespace)
         {
-            Arguments = ImmutableList.Create(new AttributeArgumentModel(layout.ToString(), TypeModel.LayoutKindType)),
+            Arguments = ImmutableList.Create(new AnnotationArgumentModel(layout.ToString(), TypeModel.LayoutKindType)),
             Properties = properties.ToImmutableDictionary()
         };
     }

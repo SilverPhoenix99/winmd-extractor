@@ -15,7 +15,7 @@ class CallbackVisitor : BaseObjectVisitor<CallbackModel>
         var method = type.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;
         var @return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
 
-        return new CallbackModel(type.Name, GetAttributes(type), @return)
+        return new CallbackModel(type.Name, GetAnnotations(type), @return)
         {
             Arguments = ImmutableList.CreateRange(
                 from p in method.Parameters
