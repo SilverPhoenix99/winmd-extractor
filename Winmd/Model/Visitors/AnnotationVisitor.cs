@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using ClassExtensions;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 using Architecture = Architecture;
 
 class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
@@ -29,10 +30,11 @@ class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
             return null;
         }
 
-        var args = new List<object>(
+        object[] args =
+        [..
             from a in attribute.ConstructorArguments
             select a.Value
-        );
+        ];
 
         var guid = new Guid(
             (uint) args[0],
@@ -50,10 +52,7 @@ class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
 
         return new AnnotationModel(Guid.Name, Metadata)
         {
-            Arguments = ImmutableList.Create(new AnnotationArgumentModel(
-                guid.ToString(),
-                TypeModel.StringType
-            ))
+            Properties = ImmutableDictionary<string, object>.Empty.Add("Value", guid.ToString())
         };
     }
 
@@ -66,29 +65,65 @@ class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
         }
 
         var value = (Architecture) (int) attribute.ConstructorArguments[0].Value;
-        var architectures =
+        string[] archs =
+        [
+            ..
             from arch in FlagsEnumVisitor.Instance.Visit(value)
-            select new AnnotationArgumentModel(arch.ToString(), TypeModel.StringType);
+            select arch.ToString()
+        ];
 
         return new AnnotationModel(SupportedArchitecture.Name, Metadata)
         {
-            Arguments = architectures.ToImmutableList()
+            Properties = ImmutableDictionary<string, object>.Empty.Add("Value", archs)
         };
     }
 
-    private static AnnotationModel CreateDefault(ICustomAttribute attribute)
+    private static AnnotationModel CreateDefault(CustomAttribute attribute)
     {
         var (name, @namespace) = attribute.AttributeType.GetQualifiedName();
+
+        var ctorArgs = GetConstructorArguments(attribute);
+
+        var properties = attribute.Fields.Concat(attribute.Properties)
+            .Select(a => KeyValuePair.Create(a.Name, a.Argument.Value));
+
         return new AnnotationModel(name, @namespace)
         {
-            Arguments = attribute.ConstructorArguments
-                .Select(arg => arg.Accept(AnnotationArgumentVisitor.Instance))
-                .ToImmutableList(),
-            Properties = attribute.Fields.Concat(attribute.Properties)
-                .ToImmutableDictionary(
-                    a => a.Name,
-                    a => a.Argument.Value
-                )
+            Properties = ctorArgs.Concat(properties).ToImmutableDictionary()
         };
+    }
+
+    private static IEnumerable<KeyValuePair<string, object>> GetConstructorArguments(CustomAttribute attribute)
+    {
+        if (!attribute.HasConstructorArguments)
+        {
+            yield break;
+        }
+
+        var type = attribute.AttributeType.Resolve();
+        var ctor = attribute.Constructor.Resolve();
+        if (ctor is null)
+        {
+            var argCount = attribute.ConstructorArguments.Count;
+            ctor = type.GetConstructors()
+                .Single(c => c.Parameters.Count == argCount)
+                .Resolve();
+        }
+
+        var typeProperties = new HashSet<string>(
+            type.Properties.Select(p => p.Name),
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        var args = ctor.Parameters.Zip(attribute.ConstructorArguments);
+
+        foreach (var arg in args)
+        {
+            yield return KeyValuePair.Create(GetName(arg.First.Name), arg.Second.Value);
+        }
+
+        yield break;
+
+        string GetName(string n) => typeProperties!.TryGetValue(n, out var p) ? p : n;
     }
 }

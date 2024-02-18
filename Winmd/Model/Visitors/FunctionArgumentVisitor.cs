@@ -24,18 +24,32 @@ class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentMo
             select a.Accept(AnnotationVisitor.Instance)
         );
 
-        if (!IsDefault(parameter.Attributes))
+        var flagsAnnotation = CreateFlags(parameter.Attributes);
+        if (flagsAnnotation is not null)
         {
-            annotations.Insert(0, new AnnotationModel("ParameterFlags")
-            {
-                Arguments = ImmutableList.CreateRange(
-                    from f in parameter.Attributes.Accept(FlagsEnumVisitor.Instance)
-                    select new AnnotationArgumentModel(f.ToString(), TypeModel.StringType)
-                )
-            });
+            annotations.Insert(0, flagsAnnotation);
         }
 
         return annotations.IsEmpty() ? null : annotations.ToImmutableList();
+    }
+
+    private static AnnotationModel? CreateFlags(ParameterAttributes attributes)
+    {
+        if (IsDefault(attributes))
+        {
+            return null;
+        }
+
+        string[] flags =
+        [..
+            from f in attributes.Accept(FlagsEnumVisitor.Instance)
+            select f.ToString()
+        ];
+
+        return new AnnotationModel("ParameterFlags")
+        {
+            Properties = ImmutableDictionary<string, object>.Empty.Add("Value", flags)
+        };
     }
 
     private static bool IsDefault(ParameterAttributes attributes) =>

@@ -23,8 +23,8 @@ abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
     }
 
     private static List<AnnotationModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
-    [
-        ..from a in customAttributes
+    [..
+        from a in customAttributes
         select a.Accept(AnnotationVisitor.Instance)
     ];
 }

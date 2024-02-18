@@ -63,3 +63,5 @@ foreach (var groupedTypes in allTypes)
     using var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
     JsonSerializer.Serialize(output, types, jsonOptions);
 }
+
+Console.WriteLine("Done");

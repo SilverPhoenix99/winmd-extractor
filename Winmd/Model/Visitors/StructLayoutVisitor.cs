@@ -45,7 +45,7 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AnnotationModel?>
             return null;
         }
 
-        var properties = new Dictionary<string, object>();
+        var properties = new Dictionary<string, object> { { "Layout", layout.ToString() } };
 
         if (charSet is not null && charSet != CharSet.Ansi)
         {
@@ -64,7 +64,6 @@ class StructLayoutVisitor : IVisitor<TypeDefinition, AnnotationModel?>
 
         return new AnnotationModel(StructLayoutName.Name, StructLayoutName.Namespace)
         {
-            Arguments = ImmutableList.Create(new AnnotationArgumentModel(layout.ToString(), TypeModel.LayoutKindType)),
             Properties = properties.ToImmutableDictionary()
         };
     }

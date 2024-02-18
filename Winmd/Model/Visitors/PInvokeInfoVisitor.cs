@@ -25,7 +25,7 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
 
         var info = method.PInvokeInfo;
 
-        var properties = new Dictionary<string, object>();
+        var properties = new Dictionary<string, object> { { "Library", info.Module.Name } };
 
         if (info.EntryPoint != method.Name)
         {
@@ -71,7 +71,6 @@ class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
 
         return new AnnotationModel(DllImport.Name, DllImport.Namespace)
         {
-            Arguments = ImmutableList.Create( new AnnotationArgumentModel(info.Module.Name, TypeModel.StringType)),
             Properties = properties.ToImmutableDictionary()
         };
     }

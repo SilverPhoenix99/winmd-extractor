@@ -42,7 +42,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 field.Name,
                 TypeModel.GuidType,
                 filteredAnnotations.IsEmpty ? null : filteredAnnotations,
-                guidAnnotation.Arguments[0].Value!,
+                guidAnnotation.Properties["Value"],
                 TypeModel.StringType
             );
         }
@@ -75,7 +75,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 field.Name,
                 FieldType,
                 filteredAnnotations.IsEmpty ? null : filteredAnnotations,
-                constAnnotation.Arguments[0].Value!,
+                constAnnotation.Properties["Value"],
                 TypeModel.StringType
             );
         }
