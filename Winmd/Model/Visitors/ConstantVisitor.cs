@@ -32,7 +32,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
-            var attrs = ImmutableList.CreateRange(
+            var filteredAnnotations = ImmutableList.CreateRange(
                 from a in annotations.Value
                 where a != guidAnnotation
                 select a
@@ -41,7 +41,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             return new ConstantModel(
                 field.Name,
                 TypeModel.GuidType,
-                attrs.IsEmpty ? null : attrs,
+                filteredAnnotations.IsEmpty ? null : filteredAnnotations,
                 guidAnnotation.Arguments[0].Value!,
                 TypeModel.StringType
             );
@@ -65,7 +65,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
                 return null;
             }
 
-            var attrs = ImmutableList.CreateRange(
+            var filteredAnnotations = ImmutableList.CreateRange(
                 from a in annotations.Value
                 where a != constAnnotation
                 select a
@@ -74,7 +74,7 @@ class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             return new ConstantModel(
                 field.Name,
                 FieldType,
-                attrs.IsEmpty ? null : attrs,
+                filteredAnnotations.IsEmpty ? null : filteredAnnotations,
                 constAnnotation.Arguments[0].Value!,
                 TypeModel.StringType
             );
