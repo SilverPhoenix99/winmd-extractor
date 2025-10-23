@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model.Visitors;
+﻿using Mono.Cecil;
 
-using Mono.Cecil;
+namespace Winmd.Model.Visitors;
 
-class ObjectVisitor(ModelKind kind) : BaseObjectVisitor<ObjectModel>
+internal class ObjectVisitor(ModelKind kind) : BaseObjectVisitor<ObjectModel>
 {
     public override ObjectModel Visit(TypeDefinition type) => new(kind, type.Name, GetAnnotations(type));
 }

@@ -1,9 +1,9 @@
-﻿namespace Winmd.ClassExtensions;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
 
-static class TypeReferenceExtensions
+namespace Winmd.ClassExtensions;
+
+internal static class TypeReferenceExtensions
 {
     public static TO Accept<TO>(this TypeReference element, IVisitor<TypeReference, TO> visitor) =>
         visitor.Visit(element);

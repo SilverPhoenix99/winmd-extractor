@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model;
+﻿using System.Collections.Immutable;
 
-using System.Collections.Immutable;
+namespace Winmd.Model;
 
-class FunctionModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
+internal class FunctionModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
     : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Function;
@@ -10,12 +10,12 @@ class FunctionModel(string name, IImmutableList<AnnotationModel>? annotations, R
     public IImmutableList<FunctionArgumentModel> Arguments { get; init; } = ImmutableList<FunctionArgumentModel>.Empty;
 }
 
-class CallbackModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
+internal class CallbackModel(string name, IImmutableList<AnnotationModel>? annotations, ReturnModel @return)
     : FunctionModel(name, annotations, @return)
 {
     public override ModelKind Kind => ModelKind.Callback;
 }
 
-record FunctionArgumentModel(string Name, TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);
+internal record FunctionArgumentModel(string Name, TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);
 
-record ReturnModel(TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);
+internal record ReturnModel(TypeModel Type, IImmutableList<AnnotationModel>? Annotations = null);

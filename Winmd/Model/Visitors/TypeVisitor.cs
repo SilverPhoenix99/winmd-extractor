@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class TypeVisitor : IVisitor<TypeReference, TypeModel>
+namespace Winmd.Model.Visitors;
+
+internal class TypeVisitor : IVisitor<TypeReference, TypeModel>
 {
     public static readonly TypeVisitor Instance = new();
 

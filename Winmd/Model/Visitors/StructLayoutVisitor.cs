@@ -1,14 +1,14 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using ClassExtensions;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 using static Mono.Cecil.TypeAttributes;
 
-class StructLayoutVisitor : IVisitor<TypeDefinition, AnnotationModel?>
+namespace Winmd.Model.Visitors;
+
+internal class StructLayoutVisitor : IVisitor<TypeDefinition, AnnotationModel?>
 {
     public static readonly StructLayoutVisitor Instance = new();
 

@@ -1,7 +1,7 @@
 ﻿namespace Winmd.Model;
 
 [Flags]
-public enum Architecture
+internal enum Architecture
 {
     X86   = 1,
     X64   = 2,

@@ -1,8 +1,8 @@
-﻿namespace Winmd.ClassExtensions;
+﻿using Mono.Cecil;
 
-using Mono.Cecil;
+namespace Winmd.ClassExtensions;
 
-static class TypeDefinitionExtensions
+internal static class TypeDefinitionExtensions
 {
     public static TO Accept<TO>(this TypeDefinition element, IVisitor<TypeDefinition, TO> visitor) =>
         visitor.Visit(element);

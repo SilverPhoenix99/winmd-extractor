@@ -1,14 +1,14 @@
-﻿namespace Winmd.Json;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ClassExtensions;
-using Model;
-using JsonProperty = ClassExtensions.JsonProperty;
+using Winmd.ClassExtensions;
+using Winmd.Model;
+using JsonProperty = Winmd.ClassExtensions.JsonProperty;
 
-class ObjectModelConverter : JsonConverter<BaseObjectModel>
+namespace Winmd.Json;
+
+internal class ObjectModelConverter : JsonConverter<BaseObjectModel>
 {
     public override void Write(Utf8JsonWriter writer, BaseObjectModel model, JsonSerializerOptions options)
     {

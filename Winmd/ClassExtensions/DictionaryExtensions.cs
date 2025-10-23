@@ -1,6 +1,6 @@
 ﻿namespace Winmd.ClassExtensions;
 
-static class DictionaryExtensions
+internal static class DictionaryExtensions
 {
     public static TValue ComputeIfMissing<TKey, TValue>(
         this IDictionary<TKey, TValue> self,

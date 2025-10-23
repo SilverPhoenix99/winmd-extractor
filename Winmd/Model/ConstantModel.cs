@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model;
+﻿using System.Collections.Immutable;
 
-using System.Collections.Immutable;
+namespace Winmd.Model;
 
-class ConstantModel(
+internal class ConstantModel(
     string name,
     TypeModel constantType,
     IImmutableList<AnnotationModel>? annotations,

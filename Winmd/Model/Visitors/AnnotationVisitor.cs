@@ -1,13 +1,14 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Runtime.InteropServices;
-using ClassExtensions;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
+using Winmd.ClassExtensions;
+
+namespace Winmd.Model.Visitors;
+
 using Architecture = Architecture;
 
-class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
+internal class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
 {
     public static readonly AnnotationVisitor Instance = new();
 
@@ -124,6 +125,6 @@ class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
 
         yield break;
 
-        string GetName(string n) => typeProperties!.TryGetValue(n, out var p) ? p : n;
+        string GetName(string n) => typeProperties.TryGetValue(n, out var p) ? p : n;
     }
 }

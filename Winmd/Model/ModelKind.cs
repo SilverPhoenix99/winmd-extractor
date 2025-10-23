@@ -1,6 +1,6 @@
 ﻿namespace Winmd.Model;
 
-enum ModelKind
+internal enum ModelKind
 {
     Apis,      // class Apis - the list of available constants and functions
     // Annotation - not used
@@ -8,7 +8,7 @@ enum ModelKind
     Constant,  // defines or consts
     Enum,
     Function,  // C functions
-    Interface, // COM interfaces?
+    Interface, // COM interfaces
     Struct,
     Typedef,
     Union,

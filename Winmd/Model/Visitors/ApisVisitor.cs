@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class ApisVisitor : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
+namespace Winmd.Model.Visitors;
+
+internal class ApisVisitor : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 {
     public static readonly ApisVisitor Instance = new();
 
@@ -20,7 +20,9 @@ class ApisVisitor : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
         var functionModels =
             from m in type.Methods
             where m.IsPublic && m.IsStatic && m.IsPInvokeImpl && !m.IsSpecialName
-            select m.Accept(FunctionVisitor.Instance);
+            let model = m.Accept(FunctionVisitor.Instance)
+            where model is not null
+            select model;
 
         var models = fieldModels.Concat(functionModels);
 

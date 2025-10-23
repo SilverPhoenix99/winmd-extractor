@@ -1,12 +1,12 @@
-﻿namespace Winmd.ClassExtensions;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-record JsonProperty(string Name, object? Value, Type Type);
+namespace Winmd.ClassExtensions;
 
-static class Utf8JsonWriterExtensions
+internal record JsonProperty(string Name, object? Value, Type Type);
+
+internal static class Utf8JsonWriterExtensions
 {
     public static void WriteObject(
         this Utf8JsonWriter writer,

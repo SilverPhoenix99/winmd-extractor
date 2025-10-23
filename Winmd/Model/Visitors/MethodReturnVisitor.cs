@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class MethodReturnVisitor : IVisitor<MethodReturnType, ReturnModel>
+namespace Winmd.Model.Visitors;
+
+internal class MethodReturnVisitor : IVisitor<MethodReturnType, ReturnModel>
 {
     public static readonly MethodReturnVisitor Instance = new();
 

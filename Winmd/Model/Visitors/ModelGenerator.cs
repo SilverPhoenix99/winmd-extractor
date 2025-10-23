@@ -1,11 +1,12 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
+
+namespace Winmd.Model.Visitors;
+
 using static ModelKind;
 
-class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
+internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
 {
     public static readonly ModelGenerator Instance = new();
 
@@ -25,6 +26,7 @@ class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObjectModel>>
             Struct => List(type.Accept(StructVisitor.Instance)),
             Typedef => List(type.Accept(TypedefVisitor.Instance)),
             Union => List(type.Accept(UnionVisitor.Instance)),
+            Interface => ImmutableList<BaseObjectModel>.Empty,
             _ => List(type.Accept(new ObjectVisitor(modelType)))
         };
     }

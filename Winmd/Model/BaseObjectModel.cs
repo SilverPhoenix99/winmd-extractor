@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model;
+﻿using System.Collections.Immutable;
 
-using System.Collections.Immutable;
+namespace Winmd.Model;
 
-abstract class BaseObjectModel(string name, IImmutableList<AnnotationModel>? annotations)
+internal abstract class BaseObjectModel(string name, IImmutableList<AnnotationModel>? annotations)
 {
     public abstract ModelKind Kind { get; }
     public string Name => name;
@@ -10,7 +10,7 @@ abstract class BaseObjectModel(string name, IImmutableList<AnnotationModel>? ann
     public IImmutableList<AnnotationModel>? Annotations => annotations;
 }
 
-class ObjectModel(ModelKind kind, string name, IImmutableList<AnnotationModel>? annotations)
+internal class ObjectModel(ModelKind kind, string name, IImmutableList<AnnotationModel>? annotations)
     : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => kind;

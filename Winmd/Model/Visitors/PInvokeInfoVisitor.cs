@@ -1,14 +1,14 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using ClassExtensions;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 using static Mono.Cecil.PInvokeAttributes;
 
-class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
+namespace Winmd.Model.Visitors;
+
+internal class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
 {
     public static readonly PInvokeInfoVisitor Instance = new();
 

@@ -1,8 +1,8 @@
-﻿namespace Winmd.ClassExtensions;
+﻿using Mono.Cecil;
 
-using Mono.Cecil;
+namespace Winmd.ClassExtensions;
 
-static class ReflectionExtensions
+internal static class ReflectionExtensions
 {
     public static (string Name, string? Namespace) GetQualifiedName(this Type type, bool stripAttributes = true)
     {

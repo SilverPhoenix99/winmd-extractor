@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model;
+﻿using System.Collections.Immutable;
 
-using System.Collections.Immutable;
+namespace Winmd.Model;
 
-class TypedefModel(string name, IImmutableList<AnnotationModel>? annotations, TypeModel sourceType)
+internal class TypedefModel(string name, IImmutableList<AnnotationModel>? annotations, TypeModel sourceType)
     : BaseObjectModel(name, annotations)
 {
     public override ModelKind Kind => ModelKind.Typedef;

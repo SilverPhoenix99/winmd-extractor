@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentModel>
+namespace Winmd.Model.Visitors;
+
+internal class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentModel>
 {
     public static readonly FunctionArgumentVisitor Instance = new();
 

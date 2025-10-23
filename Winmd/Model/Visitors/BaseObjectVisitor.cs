@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
+namespace Winmd.Model.Visitors;
+
+internal abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
     where T : BaseObjectModel
 {
     public abstract T Visit(TypeDefinition type);

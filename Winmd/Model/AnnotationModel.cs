@@ -1,8 +1,8 @@
-﻿namespace Winmd.Model;
+﻿using System.Collections.Immutable;
 
-using System.Collections.Immutable;
+namespace Winmd.Model;
 
-record AnnotationModel(string Name, string? Namespace = null)
+internal record AnnotationModel(string Name, string? Namespace = null)
 {
     public IImmutableDictionary<string, object> Properties { get; init; } = ImmutableDictionary<string, object>.Empty;
 }

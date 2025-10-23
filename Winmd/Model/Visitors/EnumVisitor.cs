@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
-class EnumVisitor : BaseObjectVisitor<EnumModel>
+namespace Winmd.Model.Visitors;
+
+internal class EnumVisitor : BaseObjectVisitor<EnumModel>
 {
     public static readonly EnumVisitor Instance = new();
 

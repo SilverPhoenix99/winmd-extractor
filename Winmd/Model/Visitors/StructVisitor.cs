@@ -1,12 +1,11 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using ClassExtensions;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class StructVisitor : BaseObjectVisitor<StructModel>
+namespace Winmd.Model.Visitors;
+
+internal class StructVisitor : BaseObjectVisitor<StructModel>
 {
     public static readonly StructVisitor Instance = new();
 
@@ -45,7 +44,7 @@ class StructVisitor : BaseObjectVisitor<StructModel>
     }
 }
 
-class UnionVisitor : StructVisitor
+internal class UnionVisitor : StructVisitor
 {
     public new static readonly UnionVisitor Instance = new();
 

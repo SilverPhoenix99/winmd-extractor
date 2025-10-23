@@ -20,12 +20,13 @@ var winmdAssemblies = Directory.GetFiles(executableDirectory, "*.winmd");
 
 var assembly = AssemblyDefinition.ReadAssembly(winmdAssemblies[0]);
 
-var allTypes =
+var allTypes = ImmutableList.CreateRange(
     from m in assembly.Modules
     from t in m.GetTypes()
     where t.IsPublic || t.IsNestedPublic
     where t.GetNamespace() != "Windows.Win32.Foundation.Metadata" // Metadata is not directly needed to generate output
-    group t by t.GetNamespace()!;
+    group t by t.GetNamespace()!
+);
 
 var jsonOptions = new JsonSerializerOptions
 {
@@ -46,11 +47,21 @@ var jsonOptions = new JsonSerializerOptions
 };
 jsonOptions.MakeReadOnly();
 
+// Gather all COM interfaces
+
+FunctionVisitor.Interfaces = ImmutableHashSet.CreateRange(
+    from groupedTypes in allTypes
+    from t in groupedTypes
+    where t.IsInterface
+    select t.FullName
+);
+
 foreach (var groupedTypes in allTypes)
 {
     var types = ImmutableList.CreateRange(
         from type in groupedTypes
         from model in type.Accept(ModelGenerator.Instance)
+        where model is not null
         select model
     );
 
@@ -62,6 +73,9 @@ foreach (var groupedTypes in allTypes)
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
     using var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
     JsonSerializer.Serialize(output, types, jsonOptions);
+    
+    Console.Write('.');
 }
 
+Console.WriteLine();
 Console.WriteLine("Done");

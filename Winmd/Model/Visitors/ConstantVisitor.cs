@@ -1,11 +1,11 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using ClassExtensions;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
+namespace Winmd.Model.Visitors;
+
+internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 {
     public static readonly ConstantVisitor Instance = new();
 

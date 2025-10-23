@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class CallbackVisitor : BaseObjectVisitor<CallbackModel>
+namespace Winmd.Model.Visitors;
+
+internal class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 {
     public static readonly CallbackVisitor Instance = new();
 

@@ -1,10 +1,10 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
-using ClassExtensions;
+﻿using System.Collections.Immutable;
 using Mono.Cecil;
+using Winmd.ClassExtensions;
 
-class TypedefVisitor : BaseObjectVisitor<TypedefModel>
+namespace Winmd.Model.Visitors;
+
+internal class TypedefVisitor : BaseObjectVisitor<TypedefModel>
 {
     public static readonly TypedefVisitor Instance = new();
 

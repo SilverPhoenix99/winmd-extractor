@@ -1,11 +1,11 @@
-﻿namespace Winmd.Model.Visitors;
-
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Numerics;
 using System.Reflection;
-using ClassExtensions;
+using Winmd.ClassExtensions;
 
-class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
+namespace Winmd.Model.Visitors;
+
+internal class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
 {
     public static readonly FlagsEnumVisitor Instance = new();
 
