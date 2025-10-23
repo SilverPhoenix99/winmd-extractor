@@ -6,7 +6,11 @@ namespace Winmd.Model.Visitors;
 
 internal class TypeVisitor : IVisitor<TypeReference, TypeModel>
 {
+    public static ImmutableHashSet<string> ComInterfaces { get; set; } = ImmutableHashSet<string>.Empty;
+    
     public static readonly TypeVisitor Instance = new();
+
+    public static bool IsCom(TypeReference type) => ComInterfaces.Contains(type.FullName);
 
     private TypeVisitor() {}
 

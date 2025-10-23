@@ -9,14 +9,13 @@ internal class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel?>
     public static readonly FunctionVisitor Instance = new();
 
     private FunctionVisitor() {}
-    public static ImmutableHashSet<string> Interfaces { get; set; } = ImmutableHashSet<string>.Empty;
 
     public FunctionModel? Visit(MethodDefinition method)
     {
         var isCom = method.Parameters
-            .Select(p => p.ParameterType.FullName)
-            .Concat([method.MethodReturnType.ReturnType.FullName])
-            .Any(Interfaces.Contains);
+            .Select(p => p.ParameterType)
+            .Concat([method.MethodReturnType.ReturnType])
+            .Any(TypeVisitor.IsCom);
         if (isCom)
         {
             // TODO: Functions with COM parameters

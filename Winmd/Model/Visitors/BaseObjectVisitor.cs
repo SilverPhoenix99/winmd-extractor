@@ -5,7 +5,7 @@ using Winmd.ClassExtensions;
 namespace Winmd.Model.Visitors;
 
 internal abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
-    where T : BaseObjectModel
+    where T : BaseObjectModel?
 {
     public abstract T Visit(TypeDefinition type);
 

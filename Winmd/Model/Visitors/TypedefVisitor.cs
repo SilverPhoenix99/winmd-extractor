@@ -4,17 +4,23 @@ using Winmd.ClassExtensions;
 
 namespace Winmd.Model.Visitors;
 
-internal class TypedefVisitor : BaseObjectVisitor<TypedefModel>
+internal class TypedefVisitor : BaseObjectVisitor<TypedefModel?>
 {
     public static readonly TypedefVisitor Instance = new();
 
     private TypedefVisitor() {}
 
-    public override TypedefModel Visit(TypeDefinition type)
+    public override TypedefModel? Visit(TypeDefinition type)
     {
         var fieldType = type.Fields
             .First(f => f.IsPublic && !f.IsStatic)
             .FieldType;
+
+        if (TypeVisitor.IsCom(fieldType))
+        {
+            // TODO: Typedefs with COM types
+            return null;
+        }
 
         return new TypedefModel(
             type.Name,

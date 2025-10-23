@@ -14,12 +14,12 @@ internal class ApisVisitor : IVisitor<TypeDefinition, IImmutableList<BaseObjectM
     {
         var fieldModels =
             from f in type.Fields
-            where f.IsPublic && f.IsStatic && !f.IsSpecialName
+            where f is { IsPublic: true, IsStatic: true, IsSpecialName: false }
             select f.Accept<BaseObjectModel>(ConstantVisitor.Instance);
 
         var functionModels =
             from m in type.Methods
-            where m.IsPublic && m.IsStatic && m.IsPInvokeImpl && !m.IsSpecialName
+            where m is { IsPublic: true, IsStatic: true, IsPInvokeImpl: true, IsSpecialName: false }
             let model = m.Accept(FunctionVisitor.Instance)
             where model is not null
             select model;

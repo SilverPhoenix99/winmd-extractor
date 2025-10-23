@@ -12,7 +12,11 @@ internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObje
 
     private ModelGenerator() {}
 
-    private static readonly Func<BaseObjectModel, ImmutableList<BaseObjectModel>> List = ImmutableList.Create;
+    private static readonly Func<BaseObjectModel?, ImmutableList<BaseObjectModel>> List = item =>
+        item == null
+            ? ImmutableList<BaseObjectModel>.Empty
+            : ImmutableList.Create(item)
+    ;
 
     public IImmutableList<BaseObjectModel> Visit(TypeDefinition type)
     {

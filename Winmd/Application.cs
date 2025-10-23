@@ -49,7 +49,7 @@ jsonOptions.MakeReadOnly();
 
 // Gather all COM interfaces
 
-FunctionVisitor.Interfaces = ImmutableHashSet.CreateRange(
+TypeVisitor.ComInterfaces = ImmutableHashSet.CreateRange(
     from groupedTypes in allTypes
     from t in groupedTypes
     where t.IsInterface

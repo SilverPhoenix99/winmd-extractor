@@ -5,18 +5,29 @@ using Winmd.ClassExtensions;
 
 namespace Winmd.Model.Visitors;
 
-internal class StructVisitor : BaseObjectVisitor<StructModel>
+internal class StructVisitor : BaseObjectVisitor<StructModel?>
 {
     public static readonly StructVisitor Instance = new();
 
     protected StructVisitor() {}
 
-    public override StructModel Visit(TypeDefinition type) =>
-        new(type.Name, GetAnnotations(type))
+    public override StructModel? Visit(TypeDefinition type)
+    {
+        if (IsCom(type))
+        {
+            return null;
+        }
+        
+        return new StructModel(type.Name, GetAnnotations(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
+    }
+
+    private static bool IsCom(TypeDefinition type) => type.Fields
+        .Select(field => field.FieldType)
+        .Any(TypeVisitor.IsCom);
 
     protected static IImmutableList<string>? GetNesting(TypeDefinition type) =>
         type.GetNesting()?.Select(t => t.Name).ToImmutableList();
