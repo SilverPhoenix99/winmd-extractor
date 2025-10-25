@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using Mono.Cecil;
 using Winmd.ClassExtensions;
+using Winmd.Model;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 {

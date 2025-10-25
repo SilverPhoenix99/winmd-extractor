@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
 using Winmd.ClassExtensions;
+using Winmd.Model;
+using Architecture = Winmd.Model.Architecture;
 
-namespace Winmd.Model.Visitors;
-
-using Architecture = Architecture;
+namespace Winmd.Visitors;
 
 internal class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
 {

@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using Winmd.ClassExtensions;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
 {
@@ -16,7 +16,7 @@ internal class FlagsEnumVisitor : IVisitor<object, IImmutableSet<Enum>>
     public IImmutableSet<Enum> Visit(object value)
     {
         var type = value.GetType();
-        if (type.GetCustomAttribute(typeof(FlagsAttribute)) is null)
+        if (type.GetCustomAttribute<FlagsAttribute>() is null)
         {
             throw new NotSupportedException($"Type {type} isn't a Flags enum.");
         }

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization.Metadata;
 using Mono.Cecil;
 using Winmd.ClassExtensions;
 using Winmd.Json;
-using Winmd.Model.Visitors;
+using Winmd.Visitors;
 
 var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
 

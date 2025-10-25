@@ -1,8 +1,9 @@
 ﻿using System.Collections.Immutable;
 using Mono.Cecil;
 using Winmd.ClassExtensions;
+using Winmd.Model;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionArgumentModel>
 {

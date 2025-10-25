@@ -1,6 +1,7 @@
 ﻿using Mono.Cecil;
+using Winmd.Model;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class ObjectVisitor(ModelKind kind) : BaseObjectVisitor<ObjectModel>
 {

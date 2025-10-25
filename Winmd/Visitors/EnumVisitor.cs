@@ -1,8 +1,9 @@
 ﻿using System.Collections.Immutable;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
+using Winmd.Model;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class EnumVisitor : BaseObjectVisitor<EnumModel>
 {

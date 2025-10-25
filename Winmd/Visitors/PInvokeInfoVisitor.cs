@@ -4,9 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Mono.Cecil;
 using Winmd.ClassExtensions;
+using Winmd.Model;
 using static Mono.Cecil.PInvokeAttributes;
 
-namespace Winmd.Model.Visitors;
+namespace Winmd.Visitors;
 
 internal class PInvokeInfoVisitor : IVisitor<MethodDefinition, AnnotationModel?>
 {
