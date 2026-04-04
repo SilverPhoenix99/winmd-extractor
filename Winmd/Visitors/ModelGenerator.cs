@@ -25,7 +25,7 @@ internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObje
             Struct    => ToSingletonList(type.Accept(StructVisitor.Instance)),
             Typedef   => ToSingletonList(type.Accept(TypedefVisitor.Instance)),
             Union     => ToSingletonList(type.Accept(UnionVisitor.Instance)),
-            Interface => ImmutableList<BaseObjectModel>.Empty,
+            Interface => ToSingletonList(type.Accept(InterfaceVisitor.Instance)),
             _         => ToSingletonList(type.Accept(new ObjectVisitor(modelType)))
         };
     }
