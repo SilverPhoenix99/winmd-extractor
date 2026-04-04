@@ -13,26 +13,20 @@ internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObje
 
     private ModelGenerator() {}
 
-    private static readonly Func<BaseObjectModel?, ImmutableList<BaseObjectModel>> List = item =>
-        item == null
-            ? ImmutableList<BaseObjectModel>.Empty
-            : ImmutableList.Create(item)
-    ;
-
     public IImmutableList<BaseObjectModel> Visit(TypeDefinition type)
     {
         var modelType = GetModelType(type);
 
         return modelType switch
         {
-            Apis => type.Accept(ApisVisitor.Instance),
-            Callback => List(type.Accept(CallbackVisitor.Instance)),
-            Enum => List(type.Accept(EnumVisitor.Instance)),
-            Struct => List(type.Accept(StructVisitor.Instance)),
-            Typedef => List(type.Accept(TypedefVisitor.Instance)),
-            Union => List(type.Accept(UnionVisitor.Instance)),
+            Apis      => type.Accept(ApisVisitor.Instance),
+            Callback  => ToSingletonList(type.Accept(CallbackVisitor.Instance)),
+            Enum      => ToSingletonList(type.Accept(EnumVisitor.Instance)),
+            Struct    => ToSingletonList(type.Accept(StructVisitor.Instance)),
+            Typedef   => ToSingletonList(type.Accept(TypedefVisitor.Instance)),
+            Union     => ToSingletonList(type.Accept(UnionVisitor.Instance)),
             Interface => ImmutableList<BaseObjectModel>.Empty,
-            _ => List(type.Accept(new ObjectVisitor(modelType)))
+            _         => ToSingletonList(type.Accept(new ObjectVisitor(modelType)))
         };
     }
 
@@ -48,5 +42,7 @@ internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObje
         : type.IsExplicitLayout ? Union
         : Struct;
 
-    private static ModelKind GetClassType(IMemberDefinition type) => type.Name == "Apis" ? Apis : Object;
+    private static ModelKind GetClassType(TypeDefinition type) => type.Name == "Apis" ? Apis : Object;
+
+    private static ImmutableList<BaseObjectModel> ToSingletonList(BaseObjectModel item) => ImmutableList.Create(item);
 }

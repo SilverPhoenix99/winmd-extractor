@@ -6,48 +6,18 @@ using Winmd.Model;
 
 namespace Winmd.Visitors;
 
-internal class StructVisitor : BaseObjectVisitor<StructModel?>
+internal class StructVisitor : BaseObjectVisitor<StructModel>
 {
     public static readonly StructVisitor Instance = new();
 
     protected StructVisitor() {}
 
-    public override StructModel? Visit(TypeDefinition type)
-    {
-        if (IsCom(type))
-        {
-            return null;
-        }
-        
-        return new StructModel(type.Name, GetAnnotations(type))
+    public override StructModel Visit(TypeDefinition type) =>
+        new(type.Name, GetAnnotations(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
-    }
-
-    protected static bool IsCom(TypeDefinition type)
-    {
-        var isCom = type.Fields
-            .Select(field => field.FieldType)
-            .Any(TypeVisitor.IsCom);
-        if (isCom)
-        {
-            return true;
-        }
-
-        var nesting = type.GetNesting();
-        if (nesting == null)
-        {
-            return false;
-        }
-
-        return nesting
-            .Select(t => t.Resolve())
-            .SelectMany(t => t.Fields)
-            .Select(f => f.FieldType)
-            .Any(TypeVisitor.IsCom);
-    }
 
     protected static IImmutableList<string>? GetNesting(TypeDefinition type) =>
         type.GetNesting()?.Select(t => t.Name).ToImmutableList();
@@ -81,19 +51,12 @@ internal class UnionVisitor : StructVisitor
 
     private UnionVisitor() {}
 
-    public override UnionModel? Visit(TypeDefinition type)
-    {
-        if (IsCom(type))
-        {
-            return null;
-        }
-        
-        return new UnionModel(type.Name, GetAnnotations(type))
+    public override UnionModel Visit(TypeDefinition type) =>
+        new(type.Name, GetAnnotations(type))
         {
             Nesting = GetNesting(type),
             Fields = GetFields(type)
         };
-    }
 
     protected override IImmutableList<AnnotationModel>? GetAnnotations(TypeDefinition type)
     {

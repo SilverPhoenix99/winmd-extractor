@@ -5,25 +5,15 @@ using Winmd.Model;
 
 namespace Winmd.Visitors;
 
-internal class CallbackVisitor : BaseObjectVisitor<CallbackModel?>
+internal class CallbackVisitor : BaseObjectVisitor<CallbackModel>
 {
     public static readonly CallbackVisitor Instance = new();
 
     private CallbackVisitor() {}
 
-    public override CallbackModel? Visit(TypeDefinition type)
+    public override CallbackModel Visit(TypeDefinition type)
     {
         var method = type.Methods.First(m => m is { IsConstructor: false, Name: "Invoke" })!;
-
-        var isCom = method.Parameters
-            .Select(p => p.ParameterType)
-            .Concat([method.MethodReturnType.ReturnType])
-            .Any(TypeVisitor.IsCom);
-        if (isCom)
-        {
-            // TODO: Callbacks with COM parameters
-            return null;
-        }
 
         var @return = method.MethodReturnType.Accept(MethodReturnVisitor.Instance);
 

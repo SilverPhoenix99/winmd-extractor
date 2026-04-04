@@ -47,15 +47,6 @@ var jsonOptions = new JsonSerializerOptions
 };
 jsonOptions.MakeReadOnly();
 
-// Gather all COM interfaces
-
-TypeVisitor.ComInterfaces = ImmutableHashSet.CreateRange(
-    from groupedTypes in allTypes
-    from t in groupedTypes
-    where t.IsInterface
-    select t.FullName
-);
-
 foreach (var groupedTypes in allTypes)
 {
     var types = ImmutableList.CreateRange(
@@ -73,7 +64,7 @@ foreach (var groupedTypes in allTypes)
     var filePath = Path.Combine(generatedPath, $"{groupedTypes.Key}.json");
     using var output = new FileStream(filePath, FileMode.Create, FileAccess.Write);
     JsonSerializer.Serialize(output, types, jsonOptions);
-    
+
     Console.Write('.');
 }
 

@@ -5,24 +5,14 @@ using Winmd.Model;
 
 namespace Winmd.Visitors;
 
-internal class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel?>
+internal class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
 {
     public static readonly FunctionVisitor Instance = new();
 
     private FunctionVisitor() {}
 
-    public FunctionModel? Visit(MethodDefinition method)
+    public FunctionModel Visit(MethodDefinition method)
     {
-        var isCom = method.Parameters
-            .Select(p => p.ParameterType)
-            .Concat([method.MethodReturnType.ReturnType])
-            .Any(TypeVisitor.IsCom);
-        if (isCom)
-        {
-            // TODO: Functions with COM parameters
-            return null;
-        }
-        
         var annotations = new List<AnnotationModel>(
             from a in method.CustomAttributes
             select a.Accept(AnnotationVisitor.Instance)
