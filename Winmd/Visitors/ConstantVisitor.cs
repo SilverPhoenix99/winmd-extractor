@@ -14,13 +14,13 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 
     public ConstantModel Visit(FieldDefinition field) => new Context(field).Visit();
 
-    private class Context(FieldDefinition field)
+    private class Context(FieldDefinition fieldDef)
     {
         public ConstantModel Visit() => VisitGuid() ?? VisitConstant() ?? VisitDefault();
 
         private ConstantModel? VisitGuid()
         {
-            if (field.FieldType.Name != TypeModel.GuidType.Name || field.HasConstant)
+            if (fieldDef.FieldType.Name != TypeModel.GuidType.Name || fieldDef.HasConstant)
             {
                 // If it has a constant, it'll be dealt with in VisitDefault
                 return null;
@@ -40,7 +40,7 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             );
 
             return new ConstantModel(
-                field.Name,
+                fieldDef.Name,
                 TypeModel.GuidType,
                 filteredAnnotations.IsEmpty ? null : filteredAnnotations,
                 guidAnnotation.Properties["Value"],
@@ -50,7 +50,7 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 
         private ConstantModel? VisitConstant()
         {
-            if (field.HasConstant)
+            if (fieldDef.HasConstant)
             {
                 // If it has a constant, it'll be dealt with in VisitDefault
                 return null;
@@ -73,7 +73,7 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
             );
 
             return new ConstantModel(
-                field.Name,
+                fieldDef.Name,
                 FieldType,
                 filteredAnnotations.IsEmpty ? null : filteredAnnotations,
                 constAnnotation.Properties["Value"],
@@ -83,16 +83,16 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 
         private ConstantModel VisitDefault()
         {
-            if (!field.HasConstant)
+            if (!fieldDef.HasConstant)
             {
-                throw new UnreachableException($"Constants should always have a value. Name = {field.FullName}");
+                throw new UnreachableException($"Constants should always have a value. Name = {fieldDef.FullName}");
             }
 
-            var value = field.Constant!;
+            var value = fieldDef.Constant!;
             var valueType = value.GetType().GetQualifiedName();
 
             return new ConstantModel(
-                field.Name,
+                fieldDef.Name,
                 FieldType,
                 annotations.Value.IsEmpty ? null : annotations.Value,
                 value,
@@ -102,7 +102,7 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
 
         private readonly Lazy<ImmutableList<AnnotationModel>> annotations = new(() =>
             ImmutableList.CreateRange(
-                from a in field.CustomAttributes
+                from a in fieldDef.CustomAttributes
                 select a.Accept(AnnotationVisitor.Instance)
             )
         );
@@ -111,8 +111,8 @@ internal class ConstantVisitor : IVisitor<FieldDefinition, ConstantModel>
         {
             get
             {
-                var fieldType = field.FieldType.Accept(TypeVisitor.Instance);
-                if (fieldType.Namespace == field.DeclaringType.Namespace)
+                var fieldType = fieldDef.FieldType.Accept(TypeVisitor.Instance);
+                if (fieldType.Namespace == fieldDef.DeclaringType.Namespace)
                 {
                     // Ignore namespace when it's enclosed in the same namespace as Apis
                     return new TypeModel(fieldType.Name)

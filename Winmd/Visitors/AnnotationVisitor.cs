@@ -23,7 +23,7 @@ internal class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
         ?? CreateArchitecture(attribute)
         ?? CreateDefault(attribute);
 
-    private static AnnotationModel? CreateGuid(ICustomAttribute attribute)
+    private static AnnotationModel? CreateGuid(CustomAttribute attribute)
     {
         var qualifiedName = attribute.AttributeType.GetQualifiedName();
         if (!qualifiedName.Equals((Guid.Name, Metadata)))
@@ -57,7 +57,7 @@ internal class AnnotationVisitor : IVisitor<CustomAttribute, AnnotationModel>
         };
     }
 
-    private static AnnotationModel? CreateArchitecture(ICustomAttribute attribute)
+    private static AnnotationModel? CreateArchitecture(CustomAttribute attribute)
     {
         var qualifiedName = attribute.AttributeType.GetQualifiedName();
         if (!qualifiedName.Equals(SupportedArchitecture))

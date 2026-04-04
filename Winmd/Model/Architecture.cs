@@ -1,9 +1,11 @@
-﻿namespace Winmd.Model;
+﻿using JetBrains.Annotations;
+
+namespace Winmd.Model;
 
 [Flags]
 internal enum Architecture
 {
-    X86   = 1,
-    X64   = 2,
-    Arm64 = 4
+    [UsedImplicitly] X86   = 1,
+    [UsedImplicitly] X64   = 2,
+    [UsedImplicitly] Arm64 = 4
 }

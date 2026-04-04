@@ -13,7 +13,7 @@ internal class CallbackVisitor : BaseObjectVisitor<CallbackModel?>
 
     public override CallbackModel? Visit(TypeDefinition type)
     {
-        var method = type.Methods.First(m => !m.IsConstructor && m.Name == "Invoke")!;
+        var method = type.Methods.First(m => m is { IsConstructor: false, Name: "Invoke" })!;
 
         var isCom = method.Parameters
             .Select(p => p.ParameterType)
