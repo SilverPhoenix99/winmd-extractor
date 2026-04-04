@@ -2,5 +2,8 @@
 
 internal static class CollectionExtensions
 {
-    public static bool IsEmpty<T>(this IReadOnlyCollection<T> list) => list.Count == 0;
+    extension<T>(IReadOnlyCollection<T> list)
+    {
+        public bool IsEmpty => list.Count == 0;
+    }
 }

@@ -4,59 +4,57 @@ namespace Winmd.ClassExtensions;
 
 internal static class ReflectionExtensions
 {
-    public static (string Name, string? Namespace) GetQualifiedName(this Type type, bool stripAttributes = true)
+    extension(Type type)
     {
-        var name = type.Name;
-        if (stripAttributes && type.BaseType == typeof(Attribute))
+        public (string Name, string? Namespace) GetQualifiedName(bool stripAttributes = true)
         {
-            name = name.StripEnd("Attribute");
-        }
+            var name = type.Name;
+            if (stripAttributes && type.BaseType == typeof(Attribute))
+            {
+                name = name.StripEnd("Attribute");
+            }
 
-        return (
-            name,
-            type.Namespace != "System" ? type.Namespace : null
-        );
+            return (
+                name,
+                type.Namespace != "System" ? type.Namespace : null
+            );
+        }
     }
 
-    public static int? Length(this ArrayDimension dimension)
+    extension(ArrayDimension dimension)
     {
-        if (!dimension.IsSized)
-        {
-            return null;
-        }
-
-        return dimension.UpperBound - dimension.LowerBound + 1;
+        public int? Length() => dimension.IsSized
+            ? dimension.UpperBound - dimension.LowerBound + 1
+            : null;
     }
 
-    public static TO Accept<TO>(this CustomAttribute element, IVisitor<CustomAttribute, TO> visitor) =>
-        visitor.Visit(element);
+    extension(CustomAttribute element)
+    {
+        public TO Accept<TO>(IVisitor<CustomAttribute, TO> visitor) => visitor.Visit(element);
+    }
 
-    public static TO Accept<TO>(this CustomAttributeArgument element, IVisitor<CustomAttributeArgument, TO> visitor) =>
-        visitor.Visit(element);
+    extension(Enum element)
+    {
+        public TO Accept<TO>(IVisitor<Enum, TO> visitor) => visitor.Visit(element);
+    }
 
-    public static TO Accept<TO>(
-        this CustomAttributeNamedArgument element,
-        IVisitor<CustomAttributeNamedArgument, TO> visitor
-    ) =>
-        visitor.Visit(element);
+    extension(FieldDefinition element)
+    {
+        public TO Accept<TO>(IVisitor<FieldDefinition, TO> visitor) => visitor.Visit(element);
+    }
 
-    public static TO Accept<TO>(this Enum element, IVisitor<Enum, TO> visitor) =>
-        visitor.Visit(element);
+    extension(ParameterDefinition element)
+    {
+        public TO Accept<TO>(IVisitor<ParameterDefinition, TO> visitor) => visitor.Visit(element);
+    }
 
-    public static TO Accept<TO>(this InterfaceImplementation element, IVisitor<InterfaceImplementation, TO> visitor) =>
-        visitor.Visit(element);
+    extension(MethodDefinition element)
+    {
+        public TO Accept<TO>(IVisitor<MethodDefinition, TO> visitor) => visitor.Visit(element);
+    }
 
-    public static TO Accept<TO>(this FieldDefinition element, IVisitor<FieldDefinition, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static TO Accept<TO>(this ParameterDefinition element, IVisitor<ParameterDefinition, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static TO Accept<TO>(this MethodDefinition element, IVisitor<MethodDefinition, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static TO Accept<TO>(this MethodReturnType element, IVisitor<MethodReturnType, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static TO Accept<TO>(this PInvokeInfo element, IVisitor<PInvokeInfo, TO> visitor) => visitor.Visit(element);
+    extension(MethodReturnType element)
+    {
+        public TO Accept<TO>(IVisitor<MethodReturnType, TO> visitor) => visitor.Visit(element);
+    }
 }

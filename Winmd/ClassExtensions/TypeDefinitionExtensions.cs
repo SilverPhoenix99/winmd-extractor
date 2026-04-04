@@ -4,18 +4,17 @@ namespace Winmd.ClassExtensions;
 
 internal static class TypeDefinitionExtensions
 {
-    public static TO Accept<TO>(this TypeDefinition element, IVisitor<TypeDefinition, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static bool IsDelegate(this TypeDefinition element) =>
-        element.BaseType?.FullName == "System.MulticastDelegate";
-
-    public static bool IsTypedef(this TypeDefinition type)
+    extension(TypeDefinition element)
     {
-        return type.CustomAttributes
-            .Any(a =>
-                a.AttributeType.Name == "NativeTypedefAttribute"
-                && a.AttributeType.GetNamespace()!.StartsWith("Windows.Win32")
-            );
+        public TO Accept<TO>(IVisitor<TypeDefinition, TO> visitor) => visitor.Visit(element);
+
+        public bool IsDelegate => element.BaseType?.FullName == "System.MulticastDelegate";
+
+        public bool IsTypedef =>
+            element.CustomAttributes
+                .Any(a =>
+                    a.AttributeType.Name == "NativeTypedefAttribute"
+                    && a.AttributeType.GetNamespace()!.StartsWith("Windows.Win32")
+                );
     }
 }

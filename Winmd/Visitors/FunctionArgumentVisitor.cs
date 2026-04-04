@@ -31,7 +31,7 @@ internal class FunctionArgumentVisitor : IVisitor<ParameterDefinition, FunctionA
             annotations.Insert(0, flagsAnnotation);
         }
 
-        return annotations.IsEmpty() ? null : annotations.ToImmutableList();
+        return annotations.IsEmpty ? null : annotations.ToImmutableList();
     }
 
     private static AnnotationModel? CreateFlags(ParameterAttributes attributes)

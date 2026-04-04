@@ -28,7 +28,7 @@ internal class FunctionVisitor : IVisitor<MethodDefinition, FunctionModel>
 
         return new FunctionModel(
             method.Name,
-            annotations.IsEmpty() ? null : annotations.ToImmutableList(),
+            annotations.IsEmpty ? null : annotations.ToImmutableList(),
             @return
         )
         {

@@ -38,6 +38,6 @@ internal class TypedefVisitor : BaseObjectVisitor<TypedefModel>
             select a
         );
 
-        return annotations.IsEmpty() ? null : annotations;
+        return annotations.IsEmpty ? null : annotations;
     }
 }

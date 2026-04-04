@@ -53,7 +53,7 @@ internal class TypeVisitor : IVisitor<TypeReference, TypeModel>
         modifiers.Reverse();
         return (
             type,
-            modifiers.IsEmpty() ? null : modifiers.ToImmutableList()
+            modifiers.IsEmpty ? null : modifiers.ToImmutableList()
         );
     }
 }

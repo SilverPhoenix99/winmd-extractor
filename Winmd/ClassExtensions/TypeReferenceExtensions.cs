@@ -5,35 +5,40 @@ namespace Winmd.ClassExtensions;
 
 internal static class TypeReferenceExtensions
 {
-    public static TO Accept<TO>(this TypeReference element, IVisitor<TypeReference, TO> visitor) =>
-        visitor.Visit(element);
-
-    public static (string Name, string? Namespace) GetQualifiedName(this TypeReference? type, bool stripAttributes = true)
+    extension(TypeReference type)
     {
-        if (type is null)
+        public TO Accept<TO>(IVisitor<TypeReference, TO> visitor) => visitor.Visit(type);
+
+        public string? GetNamespace()
         {
-            return ("", null);
+            var @namespace = type.IsNested ? type.GetNesting()![0].Namespace : type.Namespace;
+            return @namespace != "System" ? @namespace : null;
         }
 
-        var name = type.Name;
-        if (stripAttributes)
+        public IImmutableList<TypeReference>? GetNesting()
         {
-            name = name.StripEnd("Attribute");
+            var nesting = GetNestingEnumerable(type).Reverse().ToImmutableList();
+            return nesting.IsEmpty ? null : nesting;
         }
-
-        return (name, type.GetNamespace());
     }
 
-    public static string? GetNamespace(this TypeReference type)
+    extension(TypeReference? type)
     {
-        var @namespace = type.IsNested ? type.GetNesting()![0].Namespace : type.Namespace;
-        return @namespace != "System" ? @namespace : null;
-    }
+        public (string Name, string? Namespace) GetQualifiedName(bool stripAttributes = true)
+        {
+            if (type is null)
+            {
+                return ("", null);
+            }
 
-    public static IImmutableList<TypeReference>? GetNesting(this TypeReference type)
-    {
-        var nesting = GetNestingEnumerable(type).Reverse().ToImmutableList();
-        return nesting.IsEmpty ? null : nesting;
+            var name = type.Name;
+            if (stripAttributes)
+            {
+                name = name.StripEnd("Attribute");
+            }
+
+            return (name, type.GetNamespace());
+        }
     }
 
     private static IEnumerable<TypeReference> GetNestingEnumerable(TypeReference type)

@@ -20,12 +20,12 @@ internal abstract class BaseObjectVisitor<T> : IVisitor<TypeDefinition, T>
             annotations.Insert(0, structLayout);
         }
 
-        return annotations.IsEmpty() ? null : annotations.ToImmutableList();
+        return annotations.IsEmpty ? null : annotations.ToImmutableList();
     }
 
     private static List<AnnotationModel> Visit(IEnumerable<CustomAttribute> customAttributes) =>
-    [..
-        from a in customAttributes
-        select a.Accept(AnnotationVisitor.Instance)
-    ];
+        [..
+            from a in customAttributes
+            select a.Accept(AnnotationVisitor.Instance)
+        ];
 }

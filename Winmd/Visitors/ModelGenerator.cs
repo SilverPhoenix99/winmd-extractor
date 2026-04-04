@@ -33,12 +33,12 @@ internal class ModelGenerator : IVisitor<TypeDefinition, IImmutableList<BaseObje
     private static ModelKind GetModelType(TypeDefinition type) =>
         type.IsInterface ? Interface
         : type.IsEnum ? Enum
-        : type.IsDelegate() ? Callback
+        : type.IsDelegate ? Callback
         : type.IsValueType ? GetStructType(type)
         : GetClassType(type);
 
     private static ModelKind GetStructType(TypeDefinition type) =>
-        type.IsTypedef() ? Typedef
+        type.IsTypedef ? Typedef
         : type.IsExplicitLayout ? Union
         : Struct;
 
