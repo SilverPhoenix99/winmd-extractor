@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-      <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata" Version="70.0.11-preview">
+      <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata" Version="71.0.20-preview">
           <IncludeAssets>all</IncludeAssets>
           <GeneratePathProperty>true</GeneratePathProperty>
       </PackageReference>
